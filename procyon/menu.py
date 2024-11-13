@@ -1,6 +1,7 @@
 import curses
 
 from procyon.element import Element
+from procyon.rowBar import RowBar
 from . import colors
 
 class Menu:
@@ -86,6 +87,9 @@ class Menu:
         :param ending: The character to print after each element
         :type ending: str, optional
         """
+        if not isinstance(element, Element):
+            raise ValueError("Passed element to draw was not of type procyon.Element")
+
         if element.isContainer:
             separator = element.separator
             for id, e in enumerate(element.elements):
@@ -99,7 +103,7 @@ class Menu:
             stdscr.addstr(elementStr + ending, augments)
 
 
-    def display(self, stdscr, ending='\n'):
+    def display(self, stdscr: curses.window, ending: str ='\n'):
         """Display all of the elements in the menu
         :param stdscr: The display to print to
         :param ending: The character(s) to print after each element
