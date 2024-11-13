@@ -1,4 +1,6 @@
 import curses
+
+from procyon.element import Element
 from . import colors
 
 class Menu:
@@ -72,13 +74,31 @@ class Menu:
             if(self.selectedIndex <= 0):
                 self.increaseSelectedIndex()
                 break
-            
-            
-    def update(self):
-        """Run the update function of each element in the menu"""
-        for key in self.elements.keys():
-            self.elements[key].update()
-    
+
+    def _drawElement(self, element, selected, stdscr, ending='\n'):
+        """Draw an individual element to the screen. If the element is a container,
+        draw each draw each element in the container recursively.
+        :param element: The element to draw
+        :type element: procyon.Element
+        :param selected: Whether or not the element is currently selected
+        :type selected: bool
+        :param stdscr: The curses screen to print to
+        :param ending: The character to print after each element
+        :type ending: str, optional
+        """
+        if element.isContainer:
+            separator = element.separator
+            for id, e in enumerate(element.elements):
+                containerSelected = (id == element.selectedIndex)
+                self._drawElement(e, selected & containerSelected, stdscr, separator)
+            augments = curses.color_pair(element.color)
+            stdscr.addstr(ending)
+        else:
+            augments = curses.color_pair(element.color)
+            elementStr = element.getStr(selected)
+            stdscr.addstr(elementStr + ending, augments)
+
+
     def display(self, stdscr, ending='\n'):
         """Display all of the elements in the menu
         :param stdscr: The display to print to
@@ -90,24 +110,15 @@ class Menu:
             element = self.elements[key]
             selected = (id == self.selectedIndex)
             
-            if element.isContainer:
-                separator = element.separator
-                for barid, e in enumerate(element.elements):
-                    barselected = False
-                    if barid == element.selectedIndex:
-                        barselected = True
-                    color = e.color
-                    augments = curses.color_pair(color)
+            try:
+                self._drawElement(element, selected, stdscr)
+            except:
+                # Do nothing for now...
+                # TODO: Figure out how to handle this -> occurs when trying to 
+                #       draw outside of screen range
+                return
 
-                    if selected:
-                        augments = curses.color_pair(color + colors.BG_GRAY)
-
-                    stdscr.addstr(str(e.getStr(selected=(barselected & selected))) + separator, augments)
-                stdscr.addstr(' \n') 
-            else:
-                color = element.color
-                augments = curses.color_pair(color)
-                if selected:
-                    augments = curses.color_pair(color + colors.BG_GRAY)
-                    augments |= curses.A_UNDERLINE
-                stdscr.addstr(str(element.getStr(selected=selected)) + ending, augments)
+    def update(self):
+        """Run the update function of each element in the menu"""
+        for key in self.elements.keys():
+            self.elements[key].update()
