@@ -1,0 +1,8 @@
+
+# Include all python files
+include procyon/*
+include README.md
+include LICENSE
+
+# Exclude tests
+exclude tests/*
