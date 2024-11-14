@@ -1,4 +1,7 @@
 
+from typing import Callable, Optional
+
+
 class Element:
     """A parent class to base all UI elements off of. A base element draws similar
     to a label, but it is not recommended to insert a plain element into a menu
@@ -9,7 +12,7 @@ class Element:
     :param color: The color to draw the text of the element in
     :type color: int, optional
     """
-    def __init__(self, label, refreshFunction=None, color=0):
+    def __init__(self, label : str, refreshFunction: Optional[Callable[[], str]] = None, color : int = 0):
         """Constructor method
         """
         self.label = label
@@ -32,13 +35,13 @@ class Element:
     def triggerAction(self):
         raise NotImplementedError("This method should be overwritten by subclasses")
 
-    def getStr(self, selected=False):
+    def getStr(self, selected : bool = False):
         """Get the display string of the element
         :return: The text to display the element as
         :rtype: str
         """
         return self.label
     
-    def handleInput(self, key):
+    def handleInput(self, key : int):
         pass
 

@@ -1,4 +1,5 @@
 
+from typing import Callable, Optional
 from .element import Element
 
 class Label(Element):
@@ -10,8 +11,8 @@ class Label(Element):
     :param color: The color to draw the text of the label in
     :type color: int, optional
     """
-    def __init__(self, label, refreshFunction=None, color=0):
-        """Constructor method
-        """
+    def __init__(self, label : str, refreshFunction : Optional[Callable[[], str]]= None,
+                 color : int = 0):
+        """Constructor method"""
         super().__init__(label, refreshFunction=refreshFunction, color=color)
 

@@ -1,4 +1,5 @@
 
+from procyon.element import Element
 from .container import Container 
 
 class RowBar(Container):
@@ -8,7 +9,7 @@ class RowBar(Container):
     :param separator: The character(s) that will be printed between each element in the bar
     :type separator: str, optional
     """
-    def __init__(self, elements, separator='\t', color=0,):
+    def __init__(self, elements : list[Element], separator : str = '\t', color : int = 0,):
         """Constructor method
         """
         super().__init__(elements, separator, color)

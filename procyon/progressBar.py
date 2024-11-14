@@ -1,4 +1,5 @@
 
+from typing import Callable, Optional
 from .element import Element
 
 class ProgressBar(Element):
@@ -16,7 +17,8 @@ class ProgressBar(Element):
     :type label: str
     """
 
-    def __init__(self, length, progress=0, refreshFunction=None, color=0, label=''):
+    def __init__(self, length : int, progress : float = 0, refreshFunction : Optional[Callable[[], str]] = None,
+                 color : int = 0, label : str = ''):
         """Constructor method
         """
         super().__init__(label, refreshFunction=refreshFunction, color=color)
@@ -24,7 +26,7 @@ class ProgressBar(Element):
         self.selectable = False
         self.progress = progress # Float between 0 and 1
 
-    def getStr(self, selected=False):
+    def getStr(self, selected : bool = False):
         """Get the string that the progressbar should display as
         :return: Display string
         :rtype: str

@@ -1,5 +1,6 @@
 
 from .element import Element
+from typing import Callable, Optional
 
 class Button(Element):
     """This class is a UI element that works as a button. It can be selected, and
@@ -17,7 +18,8 @@ class Button(Element):
     :type setLabelToResult: bool, optional
     """
 
-    def __init__(self, label, action, refreshFunction=None, color=0, setLabelToResult=False):
+    def __init__(self, label : str, action : Callable, refreshFunction : Optional[Callable[[], str]] = None, 
+                 color : int =0, setLabelToResult : bool = False):
         """Constructor method
         """
         super().__init__(label, refreshFunction=refreshFunction, color=color)
@@ -31,7 +33,7 @@ class Button(Element):
         if type(result) == str and self.setLabelToResult:
             self.label = str(result)
 
-    def getStr(self, selected=False):
+    def getStr(self, selected : bool =False) -> str:
         """Get the string that the button should display as
         :param selected: Whether or not the button is selected in the menu
         :type selected: bool, optional

@@ -7,7 +7,7 @@ class Container(Element):
     this base Container class is not meant to be used directly, and should 
     only be used as a polymorphic parent. """
 
-    def __init__(self, elements, separator=' ', color=0):
+    def __init__(self, elements : list[Element], separator : str =' ', color : int =0):
         """ Constructor method """
         super().__init__('', color=color)
 
@@ -34,7 +34,7 @@ class Container(Element):
             self.increaseSelectedIndex()
             self.decreaseSelectedIndex()
 
-    def handleInput(self, key):
+    def handleInput(self, key : int):
         """Pass input keys from the menu to the selected element
         :param key: The key that was input
         :type key: int
@@ -67,7 +67,7 @@ class Container(Element):
                 self.increaseSelectedIndex()
                 break
 
-    def getStr(self, selected=False):
+    def getStr(self, selected : bool = False) -> str:
         """Get the display string of the rowbar, including getting the strings of all of 
         the elements contained inside the rowbar
         :param selected: Whether or not the bar is selected in the menu
