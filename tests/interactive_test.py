@@ -1,5 +1,6 @@
 
 import curses
+from procyon.checkBox import CheckBox
 from procyon.label import Label
 from procyon.menu import Menu
 from procyon.button import Button
@@ -7,7 +8,7 @@ from procyon.rowBar import RowBar
 from procyon.uiManager import UIManager
 
 def buttonFunction():
-    return "Clicked!" 
+    return  str('clicked')
 
 def main(stdscr: curses.window):
     # Clear screen
@@ -22,15 +23,22 @@ def main(stdscr: curses.window):
     rowBarLabels = ['rowBarButton1', 'rowBarButton2', 'rowBarButton3']
     elements = []
     for label in rowBarLabels:
-        button = Button(label, lambda: buttonFunction)
+        button = Button(label, lambda: buttonFunction())
+        button.setLabelToResult = True
         elements.append(button)
     bar = RowBar(elements, '\t')
     mainMenu.addElement("buttonRowbar", bar)
 
     buttonLabels = ['Button1', 'Button2', 'Button3']
     for label in buttonLabels:
-        button = Button(label, lambda: buttonFunction)
+        button = Button(label, lambda: buttonFunction())
+        button.setLabelToResult = True
         mainMenu.addElement(label, button)
+
+    checkboxLabels = ['Checkbox 1', 'Checkbox 2', 'Checkbox 3']
+    for label in checkboxLabels:
+        checkbox = CheckBox(label)
+        mainMenu.addElement(label, checkbox)
 
 
     manager.addMenu(mainMenu)
