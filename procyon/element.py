@@ -47,5 +47,6 @@ class Element:
         return self.label
     
     def handleInput(self, key : int):
+        """ Do nothing for now as no input should be passed into a simple element """
         pass
 
