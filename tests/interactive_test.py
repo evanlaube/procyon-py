@@ -9,7 +9,7 @@ from procyon.uiManager import UIManager
 def buttonFunction():
     return "Clicked!" 
 
-def main(stdscr):
+def main(stdscr: curses.window):
     # Clear screen
     stdscr.clear()
 
