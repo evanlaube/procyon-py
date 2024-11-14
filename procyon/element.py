@@ -20,6 +20,7 @@ class Element:
         self.refreshFunction = refreshFunction
         self.selectable = False
         self.isContainer = False
+        self.action = None
     
     def update(self):
         """Update the label of the element by running its refreshFunction
@@ -33,7 +34,10 @@ class Element:
             raise Exception("Unable to run refreshFunction for label:", self.label)
     
     def triggerAction(self):
-        raise NotImplementedError("This method should be overwritten by subclasses")
+        """ Run the action of the element, if it exists """
+        if self.action == None:
+            return
+        self.action()
 
     def getStr(self, selected : bool = False):
         """Get the display string of the element
