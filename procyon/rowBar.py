@@ -1,5 +1,5 @@
 
-from procyon.element import Element
+from .element import Element
 from .container import Container 
 
 class RowBar(Container):

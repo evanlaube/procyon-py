@@ -1,8 +1,8 @@
 import curses
 
-from procyon.container import Container
-from procyon.element import Element
-from procyon.rowBar import RowBar
+from .container import Container
+from .element import Element
+from .rowBar import RowBar
 from . import colors
 
 class Menu:
