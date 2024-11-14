@@ -1,5 +1,6 @@
 import curses
 
+from procyon.container import Container
 from procyon.element import Element
 from procyon.rowBar import RowBar
 from . import colors
@@ -11,7 +12,7 @@ class Menu:
     :param name: The name of the menu
     :type name: str
     """
-    def __init__(self, name):
+    def __init__(self, name : str):
         """Constructor method
         """
         self.name = name
@@ -19,7 +20,7 @@ class Menu:
         self.selectedIndex = 0
         self.hasSelectable = False
 
-    def addElement(self, name, element):
+    def addElement(self, name : str, element : Element):
         """Add an element to the menu
         :param name: The name of the element
         :type name: str
@@ -33,7 +34,7 @@ class Menu:
             self.hasSelectable = True
             self.selectedIndex = len(self.elements)-1
 
-    def handleInput(self, key):
+    def handleInput(self, key : str):
         """Forward the input key to the selected element in the menu
         :param key: The input key
         :type key: int
@@ -76,7 +77,8 @@ class Menu:
                 self.increaseSelectedIndex()
                 break
 
-    def _drawElement(self, element, selected, stdscr, ending='\n'):
+    def _drawElement(self, element: Element | Container, selected : bool, 
+                     stdscr : curses.window, ending : str ='\n'):
         """Draw an individual element to the screen. If the element is a container,
         draw each draw each element in the container recursively.
         :param element: The element to draw
@@ -87,10 +89,8 @@ class Menu:
         :param ending: The character to print after each element
         :type ending: str, optional
         """
-        if not isinstance(element, Element):
-            raise ValueError("Passed element to draw was not of type procyon.Element")
 
-        if element.isContainer:
+        if isinstance(element, Container):
             separator = element.separator
             for id, e in enumerate(element.elements):
                 containerSelected = (id == element.selectedIndex)
