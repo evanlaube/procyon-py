@@ -1,7 +1,7 @@
 import curses
 import time
 
-from procyon.menu import Menu
+from .menu import Menu
 
 class UIManager:
     """A class for managing and running all UI functions. The UIManager stores a dict of
@@ -10,6 +10,7 @@ class UIManager:
     :param stdscr: The screen to print menus to
     """
     def __init__(self, stdscr : curses.window):
+        """ Constructor method """
         self.stdscr = stdscr
         self.currentMenu = None
         self.menus = {} 
@@ -18,6 +19,7 @@ class UIManager:
         curses.curs_set(0)
         curses.start_color()
         curses.use_default_colors()
+        curses.noecho()
 
         # Background color pallette (XTerm-256)
         bgColors = [-1,0,1,2,3,4,5,6,236]
@@ -31,24 +33,37 @@ class UIManager:
         self.stdscr.refresh()
         self.stdscr.timeout(100)
 
+        # Use alternate screen buffer to prevent scrollback trail
+        curses.raw() 
+        self.stdscr.leaveok(True)
+
     def run(self):
         """Reset the current display and run the main loop"""
         self.stdscr.clear()
         self.stdscr.refresh()
         self.mainLoop()
+        self.cleanup()
+
+    def cleanup(self):
+        """Reset terminal state before exiting"""
+        curses.nocbreak()
+        self.stdscr.keypad(False)
+        curses.echo()
+        curses.endwin() 
 
     def mainLoop(self):
         """Continually update menus and elements until the program exits"""
         try:
             while self.shouldExit == False:
-                if self.currentMenu != None:
+                if self.currentMenu is not None:
                     self.stdscr.clear()
                     self.menus[self.currentMenu].update()
                     self.menus[self.currentMenu].display(self.stdscr)
                 key = self.stdscr.getch()
-                self.menus[self.currentMenu].handleInput(key)
+                if key != -1:
+                    self.menus[self.currentMenu].handleInput(key)
         except KeyboardInterrupt:
-            self.shouldExit = False 
+            self.shouldExit = True 
 
     def addMenu(self, menu : Menu):
         """Insert a menu into the dictionary of menus. Note that menus can
