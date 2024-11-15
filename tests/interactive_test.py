@@ -40,6 +40,9 @@ def main(stdscr: curses.window):
         checkbox = CheckBox(label)
         mainMenu.addElement(label, checkbox)
 
+    sizeLabel = Label('Size', refreshFunction=lambda m=manager: f'{m.rows}, {m.cols}')
+    mainMenu.addElement('sizeLabel', sizeLabel)
+
 
     manager.addMenu(mainMenu)
     manager.switchMenu('main')

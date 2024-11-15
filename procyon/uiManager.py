@@ -16,17 +16,12 @@ class UIManager:
         self.menus = {} 
         self.shouldExit = False
 
+        self.updateWindowSize()
+
         curses.curs_set(0)
-        curses.start_color()
-        curses.use_default_colors()
         curses.noecho()
 
-        # Background color pallette (XTerm-256)
-        bgColors = [-1,0,1,2,3,4,5,6,236]
-
-        for i in range(len(bgColors)):
-            for n in range(16):
-                curses.init_pair(i*16+n, n-1, bgColors[i])
+        self.initializeColors()
 
         self.stdscr.bkgd(' ', curses.color_pair(0))
         self.stdscr.clear()
@@ -37,10 +32,26 @@ class UIManager:
         curses.raw() 
         self.stdscr.leaveok(True)
 
+    def initializeColors(self):
+        """ Initializes the curses color pairs """
+        curses.start_color()
+        curses.use_default_colors()
+
+        # Background color pallette (XTerm-256)
+        bgColors = [-1,0,1,2,3,4,5,6,236]
+
+        for i in range(len(bgColors)):
+            for n in range(16):
+                curses.init_pair(i*16+n, n-1, bgColors[i])
+
+    def updateWindowSize(self):
+        ''' Gets the current size of the curses window and stores it in member
+        variables self.rows and self.cols'''
+        self.rows, self.cols = self.stdscr.getmaxyx()
+
+
     def run(self):
         """Reset the current display and run the main loop"""
-        self.stdscr.clear()
-        self.stdscr.refresh()
         self.mainLoop()
         self.cleanup()
 
@@ -51,16 +62,28 @@ class UIManager:
         curses.echo()
         curses.endwin() 
 
+    def display(self):
+        """ Displays the current state of the menu """
+        if self.currentMenu is not None:
+           self.stdscr.clear()
+           self.menus[self.currentMenu].update()
+           self.menus[self.currentMenu].display(self.stdscr)
+
     def mainLoop(self):
         """Continually update menus and elements until the program exits"""
         try:
             while self.shouldExit == False:
-                if self.currentMenu is not None:
-                    self.stdscr.clear()
-                    self.menus[self.currentMenu].update()
-                    self.menus[self.currentMenu].display(self.stdscr)
+                self.display()
                 key = self.stdscr.getch()
-                if key != -1:
+                if key == -1:
+                    # Continue on timeout character
+                    continue
+                elif key == curses.KEY_RESIZE:
+                    # Update window size when window is resized
+                    self.updateWindowSize()
+                    self.menus[self.currentMenu].update()
+                else:
+                    # Pass other inputs to current menu
                     self.menus[self.currentMenu].handleInput(key)
         except KeyboardInterrupt:
             self.shouldExit = True 
