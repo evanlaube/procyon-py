@@ -82,6 +82,9 @@ class UIManager:
                     # Update window size when window is resized
                     self.updateWindowSize()
                     self.menus[self.currentMenu].update()
+                elif key == 3: 
+                    # Exit on Ctrl+C
+                    self.shouldExit = True
                 else:
                     # Pass other inputs to current menu
                     self.menus[self.currentMenu].handleInput(key)
