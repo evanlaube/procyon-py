@@ -20,6 +20,10 @@ class Menu:
         self.selectedIndex = 0
         self.hasSelectable = False
 
+        self._desiredWidth : int = -1 
+        self._desiredHeight : int = -1
+        self._scalable : bool = True 
+
     def addElement(self, name : str, element : Element):
         """Add an element to the menu
         :param name: The name of the element
@@ -101,6 +105,33 @@ class Menu:
             augments = curses.color_pair(element.color)
             elementStr = element.getStr(selected)
             stdscr.addstr(elementStr + ending, augments)
+
+    def setDesiredSize(self, width : int, height : int, resizable : bool = True):
+        """ Set the desired size of the menu, otherwise it will be set to minimum
+        size required to fit all elements 
+        :param width: The desired width
+        :type width: int
+        :param height: The desired height
+        :type height: int
+        :param resizable: Whether or not the size of the menu can be changed or if it is fixed
+        :type resizable: bool, optional 
+        """
+        self._desiredWidth = width
+        self._desiredHeight = height
+        self._scalable = resizable
+
+    def getDesiredSize(self):
+        """ Return the desired size of the menu 
+        :returns: Desired size (width, height)
+        :rtype: tuple
+        """
+        return (self._desiredWidth, self._desiredHeight)
+
+    def isScalable(self):
+        """ Returns whether or not the menu can be scaled 
+        :rtype: bool
+        """
+        return self._scalable
 
 
     def display(self, stdscr: curses.window, ending: str ='\n'):
