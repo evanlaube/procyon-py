@@ -49,9 +49,13 @@ class UIManager:
         # Background color pallette (XTerm-256)
         bgColors = [-1,0,1,2,3,4,5,6,236]
 
-        for i in range(len(bgColors)):
-            for n in range(16):
-                curses.init_pair(i*16+n, n-1, bgColors[i])
+        try:
+            for i in range(len(bgColors)):
+                for n in range(16):
+                    curses.init_pair(i*16+n, n-1, bgColors[i])
+        except:
+            # Return for now. TODO: find a way to enter single color mode
+            return
 
     def updateWindowSize(self):
         ''' Gets the current size of the curses window and stores it in member
