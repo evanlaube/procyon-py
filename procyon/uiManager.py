@@ -59,7 +59,29 @@ class UIManager:
         self.rows, self.cols = self.stdscr.getmaxyx()
         # Subtract one from cols to prevent error when printing in bottom right corner
         self.cols -= 1
-        self._rootPanel.setSize(self.rows, self.cols)
+
+        self._updatePanelSize(self._rootPanel, self.rows, self.cols)
+
+    def _updatePanelSize(self, panel : Panel, rows : int, cols : int):
+        panel.setSize(cols, rows)
+
+        left = panel.getLeft()
+        right = panel.getRight()
+        top = panel.getTop()
+        bottom = panel.getBottom()
+
+        if left is not None and right is not None:
+            leftCols = cols // 2 
+            rightCols = cols = leftCols
+
+            self._updatePanelSize(left, rows, leftCols)
+            self._updatePanelSize(right, rows, rightCols)
+        elif top is not None and bottom is not None:
+            topRows = rows // 2
+            bottomRows = rows - topRows
+            self._updatePanelSize(top, topRows, cols)
+            self._updatePanelSize(bottom, bottomRows, cols)
+
 
 
     def run(self):
@@ -113,7 +135,7 @@ class UIManager:
                     for x in range(position[0], position[0] + topSize[0]):
                         self.stdscr.addstr(position[1]+topSize[1], position[0] + x, horizontalSep)
                 except:
-                    raise Exception("\n\n\n\n\nERRORLOG:", position, topSize, "\n\n\n\n\n")
+                    return
             elif left is not None and right is not None:
                 leftSize = left.getSize()
 
@@ -126,20 +148,32 @@ class UIManager:
                 except:
                     return
         else:
-            elements = list(menu.elements.values())
+            # Update Menu
+            menu.update()
 
+            # TODO: Figure out how to determine if panel is selceted
+            panelSelected = True
+
+            # Display Menu
+            elements = menu.elements 
             startY = position[1]
             startX = position[0]
-            for i in range(len(elements)):
-                y = startY + i
+            for id, key in enumerate(elements.keys()):
+                element = elements[key]
+                selected = panelSelected & (id == menu.selectedIndex)
+
+                y = startY + id
                 if y > startY + panel.getSize()[1]-1:
                     break
-                elementStr = elements[i].getStr() 
+                elementStr = element.getStr(selected) 
                 for x in range(len(elementStr)):
                     if x + startX > panel.getSize()[0]-1:
                         break
                     char = elementStr[x]
-                    self.stdscr.addstr(y+1, x+startX, char)
+                    try:
+                        self.stdscr.addstr(y+1, x+startX, char)
+                    except:
+                        continue
 
     def mainLoop(self):
         """Continually update menus and elements until the program exits"""
