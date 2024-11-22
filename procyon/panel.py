@@ -118,3 +118,22 @@ class Panel:
         self._menu = None
 
         return (self._left, self._right) 
+
+    def isSelectable(self):
+        """ Returns whether or not the panel either contains a menu with a selectable 
+        element, or contains another panel that is selectable 
+        :returns: Whether or not the panel is selectable
+        :rtype: bool
+        """
+        if self._menu is not None:
+            return self._menu.hasSelectable
+        else:
+            if self._left is not None and self._left.isSelectable():
+                return True
+            elif self._top is not None and self._top.isSelectable():
+                return True
+            elif self._right is not None and self._right.isSelectable():
+                return True
+            elif self._bottom is not None and self._bottom.isSelectable():
+                return True
+        return False
