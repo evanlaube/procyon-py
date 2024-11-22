@@ -1,6 +1,4 @@
 import curses
-from re import L
-import time
 
 from procyon.panel import Panel
 
@@ -100,8 +98,6 @@ class UIManager:
         """ Displays the root panel """
         if self.currentMenu is not None:
            self.stdscr.clear()
-           #self.menus[self.currentMenu].update()
-           #self.menus[self.currentMenu].display(self.stdscr)
            self._recDisplayPanel(self._rootPanel, (0,0))
 
     def _recDisplayPanel(self, panel : Panel | None, position : tuple[int, int]):
@@ -213,4 +209,5 @@ class UIManager:
         """
         if menuName in self.menus.keys():
             self.currentMenu = menuName 
+
 
