@@ -8,7 +8,7 @@ from procyon.rowBar import RowBar
 from procyon.uiManager import UIManager
 
 def buttonFunction():
-    return  str('clicked')
+    return str('clicked')
 
 def main(stdscr: curses.window):
     # Clear screen
@@ -41,11 +41,10 @@ def main(stdscr: curses.window):
         mainMenu.addElement(label, checkbox)
 
     sizeLabel = Label('Size', refreshFunction=lambda m=manager: f'{m.rows}, {m.cols}')
-    mainMenu.addElement('sizeLabel', sizeLabel)
+    mainMenu.addElement('sizeLabel', sizeLabel) 
 
+    manager._rootPanel.loadMenu(mainMenu)
 
-    manager.addMenu(mainMenu)
-    manager.switchMenu('main')
     manager.run()
     
 
