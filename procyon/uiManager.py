@@ -297,10 +297,6 @@ class UIManager:
             self.update()
             self.display()
             key = self.stdscr.getch()
-            f = open('keys.txt', 'a')
-            f.write(str(key))
-            f.write('\n')
-            f.close()
             if key == -1:
                 # Continue on timeout character
                 continue
