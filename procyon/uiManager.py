@@ -13,11 +13,10 @@ class UIManager:
     def __init__(self, stdscr : curses.window):
         """ Constructor method """
         self.stdscr = stdscr
-        self.currentMenu = None
-        self.menus = {} 
         self.shouldExit = False
 
         self._rootPanel = Panel()
+        self._selectedPanel = self._rootPanel
         self.updateWindowSize()
 
         # Create a root panel to contain all other panels
@@ -84,8 +83,6 @@ class UIManager:
             self._updatePanelSize(top, topRows, cols)
             self._updatePanelSize(bottom, bottomRows, cols)
 
-
-
     def run(self):
         """Reset the current display and run the main loop"""
         self.mainLoop()
@@ -100,7 +97,7 @@ class UIManager:
 
     def display(self):
         """ Displays the root panel """
-        if self.currentMenu is not None:
+        if self._rootPanel is not None:
            self.stdscr.clear()
            self._recDisplayPanel(self._rootPanel, (0,0))
 
@@ -148,11 +145,8 @@ class UIManager:
                 except:
                     return
         else:
-            # Update Menu
-            menu.update()
-
             # TODO: Figure out how to determine if panel is selceted
-            panelSelected = True
+            panelSelected = panel == self._selectedPanel 
 
             # Display Menu
             elements = menu.elements 
@@ -175,43 +169,182 @@ class UIManager:
                     except:
                         continue
 
+    def update(self):
+        """ Updates each individual panel """
+        if self._rootPanel is not None:
+            self._recUpdatePanel(self._rootPanel)
+
+    def _recUpdatePanel(self, panel : Panel | None):
+        """ Recursive call for update method """
+        if panel is None:
+            return
+
+        menu = panel.getMenu()
+        if menu is not None:
+            menu.update()
+            return
+
+        self._recUpdatePanel(panel.getTop())
+        self._recUpdatePanel(panel.getRight())
+        self._recUpdatePanel(panel.getBottom())
+        self._recUpdatePanel(panel.getLeft())
+
+    def selectPanel(self, panel : Panel):
+        """ Searches the given panel for a panel with a menu in it and selects
+        the first one found. Search order is top, left, bottom, right. 
+        :param panel: The panel to select
+        :type panel: Panel
+        """
+        if panel.hasMenu():
+            self._selectedPanel = panel
+            return
+
+        top = panel.getTop()
+        right = panel.getRight()
+        bottom = panel.getBottom()
+        left = panel.getLeft()
+
+        # Carry out traversal order in reverse
+        if right is not None:
+            self.selectPanel(right)
+        if bottom is not None:
+            self.selectPanel(bottom)
+        if left is not None:
+            self.selectPanel(left)
+        if top is not None:
+            self.selectPanel(top)
+
+    def traversePanelUp(self):
+        """ Traverses the current selected panel to the panel diretly on top 
+        of the current selected panel, if one exsts """
+        parent = self._selectedPanel.getParent()
+        self._recTraversePanelUp(parent)
+    
+    def _recTraversePanelUp(self, panel : Panel | None):
+        """ Recursive call for traversePanelUp method """
+        if panel is None:
+            # Then there is no panel on top of current selected
+            return
+
+        top = panel.getTop()
+        if top is not None:
+            self.selectPanel(top)
+            return
+
+        self._recTraversePanelUp(panel.getParent())
+
+    def traversePanelRight(self):
+        """ Traverses the current selected panel to the panel diretly right 
+        of the current selected panel, if one exsts """
+        parent = self._selectedPanel.getParent()
+        self._recTraversePanelRight(parent)
+
+    def _recTraversePanelRight(self, panel : Panel | None):
+        """ Recursive call for traversePanelRight method """
+        if panel is None:
+            # Then there is no panel right of current selected
+            return
+
+        right = panel.getRight()
+        if right is not None:
+            self.selectPanel(right)
+            return
+        self._recTraversePanelRight(panel.getParent())
+
+    def traversePanelDown(self):
+        """ Traverses the current selected panel to the panel diretly below 
+        of the current selected panel, if one exsts """
+        parent = self._selectedPanel.getParent()
+        self._recTraversePanelDown(parent)
+        self._selectedPanel = self._rootPanel._bottom
+
+    def _recTraversePanelDown(self, panel : Panel | None):
+        """ Recursive call for traversePanelDown method """
+        if panel is None:
+            # Then there is no panel below current selected
+            return
+        
+        bottom = panel.getBottom()
+        if bottom is not None:
+            self.selectPanel(bottom)
+            return
+        self._recTraversePanelDown(panel.getParent())
+
+    def traversePanelLeft(self):
+        """ Traverses the current selected panel to the panel diretly left 
+        of the current selected panel, if one exsts """
+        parent = self._selectedPanel.getParent()
+        self._recTraversePanelLeft(parent)
+
+    def _recTraversePanelLeft(self, panel : Panel | None):
+        """ Recursive call for traversePanelLeft method """
+        if panel is None:
+            # Then there is no panel left of current selected
+            return
+        
+        left = panel.getLeft()
+        if left is not None:
+            self.selectPanel(left)
+            return
+        self._recTraversePanelLeft(panel.getParent())
+
     def mainLoop(self):
         """Continually update menus and elements until the program exits"""
-        try:
-            while self.shouldExit == False:
-                self.display()
-                key = self.stdscr.getch()
-                if key == -1:
-                    # Continue on timeout character
-                    continue
-                elif key == curses.KEY_RESIZE:
-                    # Update window size when window is resized
-                    self.updateWindowSize()
-                    self.menus[self.currentMenu].update()
-                elif key == 3: 
-                    # Exit on Ctrl+C
-                    self.shouldExit = True
-                else:
-                    # Pass other inputs to current menu
-                    self.menus[self.currentMenu].handleInput(key)
-        except KeyboardInterrupt:
-            self.shouldExit = True 
+        while self.shouldExit == False:
+            if not self._selectedPanel.hasMenu():
+                self.selectPanel(self._rootPanel)
 
-    def addMenu(self, menu : Menu):
-        """Insert a menu into the dictionary of menus. Note that menus can
-        be overwritten without warning.
-        :param menu: The menu to insert
-        :type menu: ui.Menu
-        """
-        name = menu.name
-        self.menus[name] = menu
+            self.update()
+            self.display()
+            key = self.stdscr.getch()
+            f = open('keys.txt', 'a')
+            f.write(str(key))
+            f.write('\n')
+            f.close()
+            if key == -1:
+                # Continue on timeout character
+                continue
+            elif key == curses.KEY_RESIZE:
+                # Update window size when window is resized
+                self.updateWindowSize()
+                self.update()
+            elif key == 3: 
+                # Exit on Ctrl+C
+                self.shouldExit = True
+            elif key == curses.KEY_SF or key == ord('J'): # Capital J or Shift+up arrow
+                # Move down a panel
+                self.traversePanelDown()
+            elif key == curses.KEY_SRIGHT or key == ord('L'): # Capital L or shift+right arrow
+                # Move right a panel
+                self.traversePanelRight()
+            elif key == curses.KEY_SR or key == ord('K'): # Capital K or shift+down arrow
+                # Move up a panel
+                self.traversePanelUp()
+            elif key == curses.KEY_SLEFT or key == ord('H'):
+                # Move left a panel
+                self.traversePanelLeft()
+            else:
+                # Pass other inputs to current menu
+                if self._selectedPanel is not None:
+                    menu = self._selectedPanel.getMenu()
+                    if menu is not None:
+                        menu.handleInput(key)
 
-    def switchMenu(self, menuName : str):
-        """Switch the currently displayed menu
-        :param menu: The name of the menu to switch to
-        :type menu: str
-        """
-        if menuName in self.menus.keys():
-            self.currentMenu = menuName 
+    #def addMenu(self, menu : Menu):
+    #    """Insert a menu into the dictionary of menus. Note that menus can
+    #    be overwritten without warning.
+    #    :param menu: The menu to insert
+    #    :type menu: ui.Menu
+    #    """
+    #    name = menu.name
+    #    self.menus[name] = menu
+
+    #def switchMenu(self, menuName : str):
+    #    """Switch the currently displayed menu
+    #    :param menu: The name of the menu to switch to
+    #    :type menu: str
+    #    """
+    #    if menuName in self.menus.keys():
+    #        self.currentMenu = menuName 
 
 
