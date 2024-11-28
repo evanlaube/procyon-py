@@ -15,8 +15,8 @@ class UIManager:
         self.stdscr = stdscr
         self.shouldExit = False
 
-        self._rootPanel = Panel()
-        self._selectedPanel = self._rootPanel
+        self._rootPanel : Panel = Panel()
+        self._selectedPanel : Panel = self._rootPanel
         self.updateWindowSize()
 
         # Create a root panel to contain all other panels
@@ -256,7 +256,6 @@ class UIManager:
         of the current selected panel, if one exsts """
         parent = self._selectedPanel.getParent()
         self._recTraversePanelDown(parent)
-        self._selectedPanel = self._rootPanel._bottom
 
     def _recTraversePanelDown(self, panel : Panel | None):
         """ Recursive call for traversePanelDown method """
@@ -291,7 +290,7 @@ class UIManager:
     def mainLoop(self):
         """Continually update menus and elements until the program exits"""
         while self.shouldExit == False:
-            if not self._selectedPanel.hasMenu():
+            if self._selectedPanel is None or not self._selectedPanel.hasMenu():
                 self.selectPanel(self._rootPanel)
 
             self.update()
