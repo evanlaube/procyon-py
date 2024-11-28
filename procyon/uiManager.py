@@ -137,7 +137,7 @@ class UIManager:
                 leftSize = left.getSize()
 
                 self._recDisplayPanel(panel.getLeft(), position)
-                self._recDisplayPanel(panel.getRight(), (position[0]+leftSize[0], position[1]))
+                self._recDisplayPanel(panel.getRight(), (position[0]+leftSize[0]+1, position[1]))
                 
                 try:
                     for y in range(position[1], position[1] + leftSize[1] + 1): # TODO: Figure out this +1
@@ -161,7 +161,7 @@ class UIManager:
                     break
                 elementStr = element.getStr(selected) 
                 for x in range(len(elementStr)):
-                    if x + startX > panel.getSize()[0]-1:
+                    if x > panel.getSize()[0]-1:
                         break
                     char = elementStr[x]
                     try:
