@@ -7,6 +7,8 @@ class Panel:
     """A class that can be used to structure the UI into different split sections.
     A Panel either is a leaf and displays a menu, or contains other panels. Note that
     a separator character is drawn along the borders where two panels are connected 
+    :param parent: The panel that contains the new panel
+    :type parent: Panel
     """
     def __init__(self, parent = None):
         """ Constructor method """
