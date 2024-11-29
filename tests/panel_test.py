@@ -1,7 +1,7 @@
 
 
 import curses
-from procyon.button import Button
+from procyon import Button
 from procyon.label import Label
 from procyon.menu import Menu
 from procyon.uiManager import UIManager
@@ -11,10 +11,8 @@ def buttonFunction():
 
 def main(stdscr: curses.window):
     manager = UIManager(stdscr)
-    mainMenu = Menu('main') 
-    #manager.addMenu(mainMenu)
-    #manager.switchMenu('main')
 
+    mainMenu = Menu('main') 
     for i in range(10):
         buttonLabel = f"Button {i}"
         button = Button(buttonLabel, buttonFunction)
@@ -35,7 +33,7 @@ def main(stdscr: curses.window):
         button.setLabelToResult = True
         topRightMenu.addElement(str(i), button)
 
-    top, bottom = manager._rootPanel.splitHorizontal()
+    top, bottom = manager.splitHorizontal()
     topLeft, topRight = top.splitVertical()
 
     bottom.loadMenu(mainMenu)
