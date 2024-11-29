@@ -325,21 +325,19 @@ class UIManager:
                     if menu is not None:
                         menu.handleInput(key)
 
-    #def addMenu(self, menu : Menu):
-    #    """Insert a menu into the dictionary of menus. Note that menus can
-    #    be overwritten without warning.
-    #    :param menu: The menu to insert
-    #    :type menu: ui.Menu
-    #    """
-    #    name = menu.name
-    #    self.menus[name] = menu
+    def splitHorizontal(self):
+        """ Split the root panel horizontally. This method can only be called once, and
+        can only be called if the panel is not already split vertically.
+        :returns: The left and right panels that are split
+        :rtype: tuple[Panel, Panel]
+        """
+        return self._rootPanel.splitHorizontal()
 
-    #def switchMenu(self, menuName : str):
-    #    """Switch the currently displayed menu
-    #    :param menu: The name of the menu to switch to
-    #    :type menu: str
-    #    """
-    #    if menuName in self.menus.keys():
-    #        self.currentMenu = menuName 
-
+    def splitVertical(self):
+        """Split the root panel horizontally. This method can only be called once, and 
+        can only be called if the root panel is not already split horizontally.
+        :returns: The top and bottom panels that are split
+        :rtype: tuple[Panel, Panel]
+        """
+        return self._rootPanel.splitVertical()
 
