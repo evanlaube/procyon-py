@@ -43,7 +43,7 @@ import curses
 from procyon import UIManager, Menu, Panel, Button, Label
 
 def buttonFunction():
-    ''' Runs when the button is activaed '''
+    ''' Runs when the button is activated '''
     return "Clicked!"
 
 def main(stdscr: curses.window):

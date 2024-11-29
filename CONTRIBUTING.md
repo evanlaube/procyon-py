@@ -41,7 +41,7 @@ pip uninstall procyon-py
 
 Then, if you have not already cloned the repository, clone it
 ```bash
-git clone https://github.com/[YOUR_USERNAME/procyon-py
+git clone https://github.com/[YOUR_USERNAME]/procyon-py
 ```
 
 Next, navigate to the root of the project:
@@ -68,16 +68,16 @@ pip install procyon-py
 
 ## Code style and formatting
 - Please follow the existing code style and formatting conventions.
-- Use meaningful variable and function names - longer names are usually preferrered to shorter ones, within reason.
-- Write clear and concise comments to explain complex code segments. While comments are preffered, they are not always necessary
+- Use meaningful variable and function names - longer names are usually preferred to shorter ones, within reason.
+- Write clear and concise comments to explain complex code segments. While comments are preferred, they are not always necessary
 
 #### Sidenote
 Through this project, I have been using camelCase for member variables, which I know is not normal convention
 in Python. I understand that most python developers prefer to use snake_case. I am not against new contributions using
-snake_case in the prject, as I do plan on eventually converting all member variables and methods to using snake_case
+snake_case in the project, as I do plan on eventually converting all member variables and methods to using snake_case
 
 ## Reporting Issues
-If you encounter any unusual bugs, issues, or have suggestions for improvements, plesae feel free to [open an issue](https://github.com/evanlaube/procyon-py/issues) on GitHub.
+If you encounter any unusual bugs, issues, or have suggestions for improvements, please feel free to [open an issue](https://github.com/evanlaube/procyon-py/issues) on GitHub.
 
 ## THANK YOU
 I could not be more appreciative for you taking your own time to consider contributing to Procyon!
