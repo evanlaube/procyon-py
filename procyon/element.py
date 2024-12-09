@@ -21,6 +21,7 @@ class Element:
         self.selectable = False
         self.isContainer = False
         self.action = None
+        self.inputLocked = False
     
     def update(self):
         """Update the label of the element by running its refreshFunction
@@ -49,4 +50,10 @@ class Element:
     def handleInput(self, key : int):
         """ Do nothing for now as no input should be passed into a simple element """
         pass
+    
+    def isInputLocked(self):
+        """ Returns whether or not the cursor is locked inside the element, preventing
+        navigation of elements with hjkl 
+        """
+        return self.inputLocked
 

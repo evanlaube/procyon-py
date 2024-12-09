@@ -44,11 +44,12 @@ class Menu:
         :type key: int
         """
         elementKey = list(self.elements)[self.selectedIndex]
-        if key == curses.KEY_UP or key == ord('k'): 
+        inputLocked = self.elements[elementKey].isInputLocked()
+        if key == curses.KEY_UP or (key == ord('k') and not inputLocked): 
             if self.selectedIndex <= 0:
                 return
             self.decreaseSelectedIndex()
-        elif key == curses.KEY_DOWN or key == ord('j'):
+        elif key == curses.KEY_DOWN or (key == ord('j') and not inputLocked):
             if self.selectedIndex >= len(self.elements)-1:
                 return
             self.increaseSelectedIndex()
