@@ -1,5 +1,6 @@
 import curses
 
+from procyon import colors
 from procyon.panel import Panel
 
 from .menu import Menu
@@ -154,6 +155,8 @@ class UIManager:
             startX = position[0]
             for id, key in enumerate(elements.keys()):
                 element = elements[key]
+
+                augments = element.color
                 selected = panelSelected & (id == menu.selectedIndex)
 
                 y = startY + id
@@ -165,7 +168,7 @@ class UIManager:
                         break
                     char = elementStr[x]
                     try:
-                        self.stdscr.addstr(y+1, x+startX, char)
+                        self.stdscr.addstr(y+1, x+startX, char, augments)
                     except:
                         continue
 
