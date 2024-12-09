@@ -38,7 +38,7 @@ class Menu:
             self.hasSelectable = True
             self.selectedIndex = len(self.elements)-1
 
-    def handleInput(self, key : str):
+    def handleInput(self, key : int):
         """Forward the input key to the selected element in the menu
         :param key: The input key
         :type key: int
