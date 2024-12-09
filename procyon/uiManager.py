@@ -309,16 +309,16 @@ class UIManager:
             elif key == 3: 
                 # Exit on Ctrl+C
                 self.shouldExit = True
-            elif key == curses.KEY_SF or key == ord('J'): # Capital J or Shift+up arrow
+            elif key == curses.KEY_SF or key == 10: # Capital J or Shift+up arrow
                 # Move down a panel
                 self.traversePanelDown()
-            elif key == curses.KEY_SRIGHT or key == ord('L'): # Capital L or shift+right arrow
+            elif key == curses.KEY_SRIGHT or key == 12: # ctrl+L or shift+right arrow
                 # Move right a panel
                 self.traversePanelRight()
-            elif key == curses.KEY_SR or key == ord('K'): # Capital K or shift+down arrow
+            elif key == curses.KEY_SR or key == 11: # ctrl+K or shift+down arrow
                 # Move up a panel
                 self.traversePanelUp()
-            elif key == curses.KEY_SLEFT or key == ord('H'):
+            elif key == curses.KEY_SLEFT or key == 263: # Ctrl + L or shift+left
                 # Move left a panel
                 self.traversePanelLeft()
             else:
