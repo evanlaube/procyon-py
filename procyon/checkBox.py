@@ -19,6 +19,8 @@ class CheckBox(Element):
 
     def __init__(self, label, action : Optional[Callable[[], str]] = None, 
                  refreshFuncton=None, color=0, state=False):
+        super().__init__(label, refreshFunction=refreshFuncton, color=color)
+
         self.label = label
         self.action = action
         self.refreshFunction = refreshFuncton

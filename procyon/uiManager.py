@@ -1,7 +1,7 @@
 import curses
 
-from procyon import colors
-from procyon.panel import Panel
+from .keybinds import KEYBINDS 
+from .panel import Panel
 
 from .menu import Menu
 
@@ -37,7 +37,6 @@ class UIManager:
         # Use alternate screen buffer to prevent scrollback trail
         curses.raw() 
         self.stdscr.leaveok(True)
-
 
     def initializeColors(self):
         """ Initializes the curses color pairs """
@@ -309,16 +308,16 @@ class UIManager:
             elif key == 3: 
                 # Exit on Ctrl+C
                 self.shouldExit = True
-            elif key == curses.KEY_SF or key == 10: # Capital J or Shift+up arrow
+            elif key in KEYBINDS['panelDown']: # Capital J or Shift+up arrow
                 # Move down a panel
                 self.traversePanelDown()
-            elif key == curses.KEY_SRIGHT or key == 12: # ctrl+L or shift+right arrow
+            elif key in KEYBINDS['panelRight']: # ctrl+L or shift+right arrow
                 # Move right a panel
                 self.traversePanelRight()
-            elif key == curses.KEY_SR or key == 11: # ctrl+K or shift+down arrow
+            elif key in KEYBINDS['panelUp']: # ctrl+K or shift+down arrow
                 # Move up a panel
                 self.traversePanelUp()
-            elif key == curses.KEY_SLEFT or key == 263: # Ctrl + L or shift+left
+            elif key in KEYBINDS['panelLeft']: # Ctrl + L or shift+left
                 # Move left a panel
                 self.traversePanelLeft()
             else:
