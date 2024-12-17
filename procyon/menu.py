@@ -54,7 +54,7 @@ class Menu:
             if self.selectedIndex >= len(self.elements)-1:
                 return
             self.increaseSelectedIndex()
-        elif key == KEYBINDS['enter']: # Enter/Return
+        elif key in KEYBINDS['enter']: # Enter/Return
             self.elements[elementKey].triggerAction()
         else:
             self.elements[elementKey].handleInput(key)
