@@ -4,6 +4,7 @@ from .container import Container
 from .element import Element
 from .rowBar import RowBar
 from . import colors
+from .keybinds import KEYBINDS
 
 class Menu:
     """A class for storing different 'screens' of elements, as well as handling input on 
@@ -53,10 +54,8 @@ class Menu:
             if self.selectedIndex >= len(self.elements)-1:
                 return
             self.increaseSelectedIndex()
-        elif key == 10: # Enter/Return
+        elif key == KEYBINDS['enter']: # Enter/Return
             self.elements[elementKey].triggerAction()
-        elif key == ord('q'):
-            exit()
         else:
             self.elements[elementKey].handleInput(key)
 

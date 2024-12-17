@@ -1,5 +1,6 @@
 
 from .element import Element
+from .keybinds import KEYBINDS
 import curses
 
 class Container(Element):
@@ -39,9 +40,9 @@ class Container(Element):
         :param key: The key that was input
         :type key: int
         """
-        if (key in (curses.KEY_LEFT, ord('h'))):
+        if key in KEYBINDS['moveLeft']:
             self.decreaseSelectedIndex()
-        elif (key in (curses.KEY_RIGHT, ord('l'))):
+        elif key in KEYBINDS['moveRight']:
             self.increaseSelectedIndex()
 
     def increaseSelectedIndex(self):
