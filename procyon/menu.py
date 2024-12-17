@@ -23,6 +23,8 @@ class Menu:
 
         self._desiredWidth : int = -1 
         self._desiredHeight : int = -1
+        self._actualWidth : int = -1
+        self._actualHeight = -1
         self._scalable : bool = True 
 
     def addElement(self, name : str, element : Element):
@@ -126,6 +128,13 @@ class Menu:
         :rtype: tuple
         """
         return (self._desiredWidth, self._desiredHeight)
+
+    def setActualSize(self, width: int, height: int):
+        self._actualWidth = width
+        self._actualHeight = height
+
+    def getActualSize(self):
+        return (self._actualWidth, self._actualHeight)
 
     def isScalable(self):
         """ Returns whether or not the menu can be scaled 

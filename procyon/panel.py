@@ -65,11 +65,12 @@ class Panel:
         self._height = height
 
     def loadMenu(self, menu : Menu):
-        """ Loads a menu into the panel 
+        """ Loads a menu into the panel and updates menu's size
         :param menu: The menu to load
         :type menu: Menu
         """
         self._menu = menu
+        self.updateMenuSize()
 
     def getMenu(self):
         """
@@ -77,6 +78,44 @@ class Panel:
         :rtype: Menu
         """
         return self._menu
+
+    def updateMenuSize(self):
+        """ Sets the menu to fully fill the panel, if its desired size is that big,
+        otherwise, sets the menu to its desired size 
+        """
+        if self._menu is None:
+            return
+
+        menu = self._menu
+        actWidth, actHeight = menu.getActualSize()
+        desWidth, desHeight = menu.getDesiredSize()
+
+        if self._width-1 > actWidth:
+            if desWidth == -1:
+                menu.setActualSize(1000, 1000)
+                actWidth = self._width-1
+                menu.setActualSize(actWidth, actHeight) 
+            else:
+                actWidth = desWidth
+                menu.setActualSize(actWidth, actHeight)
+                # Shrink own width
+                panelWidth, panelHeight = actWidth, actHeight
+                if panelWidth > 5:
+                    self.setSize(panelWidth, self._height)
+                if panelHeight > 5:
+                    self.setSize(self._width, panelHeight)
+
+        if self._height-1 > actHeight:
+            if desHeight == -1:
+                menu.setActualSize(actWidth, self._height-1)
+            else:
+                menu.setActualSize(actWidth, desHeight)
+                # Shrink own height
+                panelWidth, panelHeight = actWidth, desHeight
+                if panelWidth > 5:
+                    self.setSize(panelWidth, self._height)
+                if panelHeight > 5:
+                    self.setSize(self._width, panelHeight)
     
     def splitHorizontal(self):
         """ Split the panel into two along the horizontal axis 

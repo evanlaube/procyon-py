@@ -22,6 +22,10 @@ class Element:
         self.isContainer = False
         self.action = None
         self.inputLocked = False
+
+        self.width = 0
+        # start maxWidth at -1 to signify element should take whole width
+        self.maxWidth = -1
     
     def update(self):
         """Update the label of the element by running its refreshFunction

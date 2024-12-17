@@ -20,6 +20,7 @@ def main(stdscr: curses.window):
         mainMenu.addElement(str(i), button)
 
     topLeftMenu = Menu('tl')
+    topLeftMenu.setDesiredSize(30, -1)
     for i in range(10):
         buttonLabel = f"TLButton {i}"
         button = Button(buttonLabel, buttonFunction)
