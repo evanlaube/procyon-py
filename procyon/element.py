@@ -23,9 +23,9 @@ class Element:
         self.action = None
         self.inputLocked = False
 
-        self.width = 0
+        self._width = 0
         # start maxWidth at -1 to signify element should take whole width
-        self.maxWidth = -1
+        self._maxWidth = -1
     
     def update(self):
         """Update the label of the element by running its refreshFunction
@@ -60,4 +60,23 @@ class Element:
         navigation of elements with hjkl 
         """
         return self.inputLocked
+    
+    def getWidth(self):
+        return self._width
+
+    def _setWidth(self, width: int):
+        if width < 1:
+            raise ValueError("Cannot set width of element to zero or lower")
+
+        self._width = width
+
+    def getMaxWidth(self):
+        return self._maxWidth
+    
+    def setMaxWidth(self, width: int):
+        if width == 0 or width < -1:
+            raise ValueError("Max width must be set to either negative one or a positive integer")
+        
+        self._maxWidth = width
+
 

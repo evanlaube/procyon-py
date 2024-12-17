@@ -162,7 +162,7 @@ class UIManager:
                 if y > startY + panel.getSize()[1]-1:
                     break
                 elementStr = element.getStr(selected) 
-                for x in range(len(elementStr)):
+                for x in range(min(element.getWidth(), len(elementStr))):
                     if x > panel.getSize()[0]-1:
                         break
                     char = elementStr[x]

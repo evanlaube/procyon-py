@@ -26,7 +26,8 @@ def main(stdscr: curses.window):
         button = Button(buttonLabel, buttonFunction)
         button.setLabelToResult = True
         topLeftMenu.addElement(str(i), button)
-
+    topLeftMenu.elements['1'].setMaxWidth(10)
+    
     topRightMenu = Menu('tr')
     for i in range(10):
         buttonLabel = f"TRButton {i}"

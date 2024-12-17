@@ -83,31 +83,6 @@ class Menu:
                 self.increaseSelectedIndex()
                 break
 
-    def _drawElement(self, element: Element | Container, selected : bool, 
-                     stdscr : curses.window, ending : str ='\n'):
-        """Draw an individual element to the screen. If the element is a container,
-        draw each draw each element in the container recursively.
-        :param element: The element to draw
-        :type element: procyon.Element
-        :param selected: Whether or not the element is currently selected
-        :type selected: bool
-        :param stdscr: The curses screen to print to
-        :param ending: The character to print after each element
-        :type ending: str, optional
-        """
-
-        if isinstance(element, Container):
-            separator = element.separator
-            for id, e in enumerate(element.elements):
-                containerSelected = (id == element.selectedIndex)
-                self._drawElement(e, selected & containerSelected, stdscr, separator)
-            augments = curses.color_pair(element.color)
-            stdscr.addstr(ending)
-        else:
-            augments = curses.color_pair(element.color)
-            elementStr = element.getStr(selected)
-            stdscr.addstr(elementStr + ending, augments)
-
     def setDesiredSize(self, width : int, height : int, resizable : bool = True):
         """ Set the desired size of the menu, otherwise it will be set to minimum
         size required to fit all elements 
@@ -142,27 +117,17 @@ class Menu:
         """
         return self._scalable
 
-
-    def display(self, stdscr: curses.window, ending: str ='\n'):
-        """Display all of the elements in the menu
-        :param stdscr: The display to print to
-        :param ending: The character(s) to print after each element
-        :type ending: str
-        """
-        stdscr.clear()
-        for id, key in enumerate(self.elements.keys()):
-            element = self.elements[key]
-            selected = (id == self.selectedIndex)
-            
-            try:
-                self._drawElement(element, selected, stdscr)
-            except:
-                # Do nothing for now...
-                # TODO: Figure out how to handle this -> occurs when trying to 
-                #       draw outside of screen range
-                return
-
     def update(self):
         """Run the update function of each element in the menu"""
         for key in self.elements.keys():
-            self.elements[key].update()
+            element = self.elements[key]
+            # Update element
+            element.update()
+            # Update width of element
+            if element.getMaxWidth() == -1 or element.getWidth() > self._actualWidth:
+                element._setWidth(self._actualWidth)
+            elif element.getMaxWidth() < self._actualWidth:
+                element._setWidth(element.getMaxWidth())
+
+
+        
