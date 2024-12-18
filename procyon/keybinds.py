@@ -8,6 +8,7 @@ if SYSTEM == 'Linux':
     KEYBINDS = {
         'enter': [10],
         'backspace': [263],
+        'backspaceWord': [8],
         'panelLeft': [72, 393],    # Shift + H or Shift + leftArrow
         'panelDown': [74, 336],   # Shift + J or Shift + downArrow
         'panelUp': [75, 337],     # Shift + K or Shift + upArrow
@@ -21,6 +22,7 @@ elif SYSTEM == "Darwin":
     KEYBINDS = {
         'enter': [10],
         'backspace': [127],
+        'backspaceWord': [8],
         'panelLeft': [72, 393],    # Shift + H or Shift + leftArrow
         'panelDown': [74, 336],   # Shift + J or Shift + downArrow
         'panelUp': [75, 337],     # Shift + K or Shift + upArrow
@@ -34,6 +36,8 @@ else:
     # Just set to Mac keybinds by default. TODO: Add support for Windows
     KEYBINDS = {
         'enter': [10],
+        'backspace': [127],
+        'backspaceWord': [8],
         'panelLeft': [72, 393],    # Shift + H or Shift + leftArrow
         'panelDown': [74, 336],   # Shift + J or Shift + downArrow
         'panelUp': [75, 337],     # Shift + K or Shift + upArrow

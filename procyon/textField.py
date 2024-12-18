@@ -2,7 +2,9 @@
 from .element import Element
 
 import curses
+import curses.ascii
 from typing import Callable, Optional
+from .keybinds import KEYBINDS
 
 class TextField(Element):
     """This class is a UI element that works as a one-line text field. Some
@@ -22,17 +24,17 @@ class TextField(Element):
     """
 
     def __init__(self, label, action : Optional[Callable[[], str]] = None,
-                 refreshFunction=None, color : int = 0, value : str = '', 
-                 minWidth : int = 10) :
+                 refreshFunction=None, color : int = 0, value : str = '') :
         """Constructor method"""
         color = color | curses.A_UNDERLINE
         super().__init__(label, refreshFunction=refreshFunction, color=color)
         self.action = action
         self.selectable = True
         self.value = value
-        self.minWidth = minWidth
         self.inputLocked = True
 
+        # Make text fields not take up whole width by default
+        self._maxWidth = 40
 
     def getStr(self, selected: bool = False) -> str:
         """ Get the string the text field should display as in the menu
@@ -41,13 +43,33 @@ class TextField(Element):
         :return: String to display checkbox as 
         :rtype: str
         """
-        return f'{self.label}: {self.value}'
+
+        promptWidth = len(self.label) + 3
+        valueWidth = self._width - promptWidth
+
+        if promptWidth + len(self.value) > self._width:
+            valueStr = self.value[len(self.value) - valueWidth:]
+        else:
+            valueStr = self.value
+
+        string = f' {self.label}: {valueStr}'
+        if selected:
+            string = '>' + string[1:]
+
+        string = string.ljust(self._width)
+
+        return string
+
 
     def handleInput(self, key : int):
         """ Add the input character to the text field if it is a valid character"""
-
         # If key is backspace of mac delete remove last character of value
-        if key == curses.KEY_BACKSPACE or key == 127:
+        if key in KEYBINDS['backspace']:
             self.value = self.value[:len(self.value)-1]
-        else:
+        if key in KEYBINDS['backspaceWord']:
+            while len(self.value) != 0 and self.value[-1] != ' ':
+                self.value = self.value[:len(self.value)-1]
+            self.value = self.value[:len(self.value)-1]
+
+        elif curses.ascii.isprint(key):
             self.value += chr(key)
