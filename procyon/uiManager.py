@@ -22,7 +22,7 @@ class UIManager:
 
         # Create a root panel to contain all other panels
         # Make root panel fill window
-        self._rootPanel.setSize(self.cols, self.rows)
+        self._rootPanel._setActualSize(self.cols, self.rows)
 
         curses.curs_set(0)
         curses.noecho()
@@ -64,7 +64,7 @@ class UIManager:
         self._updatePanelSize(self._rootPanel, self.rows, self.cols)
 
     def _updatePanelSize(self, panel : Panel, rows : int, cols : int):
-        panel.setSize(cols, rows)
+        panel._setActualSize(cols, rows)
 
         left = panel.getLeft()
         right = panel.getRight()
@@ -181,15 +181,131 @@ class UIManager:
         if panel is None:
             return
 
+
+        # Update panel menus
         menu = panel.getMenu()
         if menu is not None:
             menu.update()
             return
 
-        self._recUpdatePanel(panel.getTop())
-        self._recUpdatePanel(panel.getRight())
-        self._recUpdatePanel(panel.getBottom())
+        if panel.getTop() and panel.getBottom():
+            # If panel is split vertically
+            top = panel.getTop()
+            bottom = panel.getBottom()
+
+            if top is None or bottom is None:
+                raise Exception("Panels undefined")
+
+            height = panel.getSize()[1]
+            width = panel.getSize()[0]
+            extraHeight = height - (top.getSize()[1] + bottom.getSize()[1])
+
+            topHeight = top.getSize()[1]
+            bottomHeight = bottom.getSize()[1] 
+
+            if extraHeight != 0:
+                topDesiredHeight = top.getDesiredSize()[1]
+                bottomDesiredHeight = bottom.getDesiredSize()[1]
+
+                if topDesiredHeight == -1 and bottomDesiredHeight == -1:
+                    topHeight = height // 2
+                    bottomHeight = height - topHeight
+                elif topDesiredHeight == -1 and bottomDesiredHeight != -1:
+                    bottomHeight = min(height-10, bottomDesiredHeight)
+                    topHeight = height-bottomHeight
+                elif topDesiredHeight != -1 and bottomDesiredHeight == -1:
+                    topHeight = min(height-10, topDesiredHeight)
+                    bottomHeight = height-topHeight
+                else:
+                    extraHeight = height - (topDesiredHeight + bottomDesiredHeight)
+                    if extraHeight > 0:
+                        topHeight = topDesiredHeight
+                        bottomHeight = bottomDesiredHeight
+                    else:
+                        if topDesiredHeight < height // 2:
+                            topHeight = topDesiredHeight
+                            bottomHeight = height - topHeight
+                        elif bottomDesiredHeight < height // 2:
+                            bottomHeight = bottomDesiredHeight
+                            topHeight = height - bottomHeight
+                        else:
+                            topHeight = height // 2
+                            bottomHeight = height - topHeight 
+
+            topWidth = min(top.getDesiredSize()[0], width)
+            bottomWidth = min(bottom.getDesiredSize()[0], width)
+
+            if topWidth == -1:
+                topWidth = width 
+
+            if bottomWidth == -1:
+                bottomWidth = width 
+
+            top.setSize(topWidth, topHeight)
+            bottom.setSize(bottomWidth, bottomHeight)
+
+        if panel.getLeft() and panel.getRight():
+            # If panel split horizontally
+            left = panel.getLeft()
+            right = panel.getRight()
+
+            if left is None or right is None:
+                raise Exception("Panels undefined")
+
+            width = panel.getSize()[0]
+            height = panel.getSize()[1]
+            extraWidth = width - (left.getSize()[0] + right.getSize()[0])
+
+            leftWidth = left.getSize()[0]
+            rightWidth = right.getSize()[0] 
+            
+            if extraWidth != 0:
+                leftDesiredWidth = left.getDesiredSize()[0]
+                rightDesiredWidth = right.getDesiredSize()[0]
+
+                if leftDesiredWidth == -1 and rightDesiredWidth == -1:
+                    leftWidth = width // 2
+                    rightWidth = width - leftWidth
+                elif leftDesiredWidth == -1 and rightDesiredWidth != -1:
+                    rightWidth = min(width-10, rightDesiredWidth)
+                    leftWidth = width - rightWidth
+                elif leftDesiredWidth != -1 and rightDesiredWidth == -1:
+                    leftWidth = min(width-10, leftDesiredWidth)
+                    rightWidth = width - leftWidth
+                else:
+                    extraWidth = width - (leftDesiredWidth + rightDesiredWidth)
+                    if extraWidth > 0:
+                        leftWidth = leftDesiredWidth
+                        rightWidth = rightDesiredWidth
+                    else:
+                        if leftDesiredWidth < width // 2:
+                            leftWidth = leftDesiredWidth
+                            rightWidth = width - leftWidth
+                        elif rightDesiredWidth < width // 2:
+                            rightWidth = rightDesiredWidth
+                            leftWidth = width - rightWidth
+                        else:
+                            leftWidth = width // 2
+                            rightWidth = width - leftWidth
+
+            rightHeight = min(right.getDesiredSize()[1], height)
+            leftHeight = min(left.getDesiredSize()[1], height)
+
+            if leftHeight == -1:
+                leftHeight = height
+            if rightHeight == -1:
+                rightHeight = height
+
+            if leftWidth == 0:
+                raise Exception(f"LeftWidth is zero! leftSize:{left.getSize()} leftDesiredSize:{left.getDesiredSize()} rightSize:{right.getSize()} rightDesiredSize:{right.getDesiredSize()}")
+
+            left.setSize(leftWidth, leftHeight)
+            right.setSize(rightWidth, rightHeight)
+
         self._recUpdatePanel(panel.getLeft())
+        self._recUpdatePanel(panel.getRight())
+        self._recUpdatePanel(panel.getTop())
+        self._recUpdatePanel(panel.getBottom())
 
     def selectPanel(self, panel : Panel):
         """ Searches the given panel for a panel with a menu in it and selects
