@@ -44,12 +44,19 @@ class Element:
             return
         self.action()
 
+    def sanitizeStr(self, elementStr : str):
+        """ Converts a display string into a printable version, for example,
+        converts tabs into four spaces """
+        elementStr.replace('\t', '    ')
+        return elementStr
+
+
     def getStr(self, selected : bool = False):
         """Get the display string of the element
         :return: The text to display the element as
         :rtype: str
         """
-        return self.label
+        return self.sanitizeStr(self.label)
     
     def handleInput(self, key : int):
         """ Do nothing for now as no input should be passed into a simple element """

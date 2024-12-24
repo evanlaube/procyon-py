@@ -83,7 +83,7 @@ class Container(Element):
             else:
                 string += element.getStr() + self.separator
 
-        return string
+        return self.sanitizeStr(string) 
 
     def triggerAction(self):
         """Trigger the action of the element contained in the bar at the selected index"""

@@ -38,7 +38,10 @@ class Button(Element):
         :param selected: Whether or not the button is selected in the menu
         :type selected: bool, optional
         """
+        elementStr = ""
         if selected:
-            return '[>' + self.label + '<]'
+            elementStr = '[>' + self.label + '<]'
         else:
-            return '[ ' + self.label + ' ]'
+            elementStr = '[ ' + self.label + ' ]'
+
+        return self.sanitizeStr(elementStr)

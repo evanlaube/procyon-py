@@ -33,7 +33,7 @@ class ProgressBar(Element):
         """
         active = round(self.progress*self.length)
         output = '●' * active + '○' * (self.length-active)
-        return output
+        return self.sanitizeStr(output)
     
     def update(self):
         """Call the refresh function of the progressbar, and set its progress to

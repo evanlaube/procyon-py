@@ -58,7 +58,7 @@ class TextField(Element):
 
         string = string.ljust(self._width)
 
-        return string
+        return self.sanitizeStr(string)
 
 
     def handleInput(self, key : int):

@@ -42,12 +42,16 @@ class CheckBox(Element):
         :return: String to display checkbox as
         :rtype: str
         '''
+        elementStr = ""
+
         stateChar = ' '
         if self.state:
             stateChar = '*'
 
         if selected:
-            return f'>[{stateChar}]<{self.label}'
+            elementStr = f'>[{stateChar}]<{self.label}'
         else:
-            return f' [{stateChar}] {self.label}'
+            elementStr = f' [{stateChar}] {self.label}'
+
+        return self.sanitizeStr(elementStr)
 
