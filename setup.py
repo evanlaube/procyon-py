@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='procyon-py',
-    version='0.3.0',
+    version='0.3.1',
     description='A terminal based UI library for Python',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
