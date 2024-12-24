@@ -18,7 +18,7 @@ def main(stdscr: curses.window):
 
     mainMenu = Menu('main')
 
-    mainMenu.addElement("title", Label("Interactive test:"))
+    mainMenu.addElement("title", Label("Interactive test:\nSecond line of label"))
 
     rowBarLabels = ['rowBarButton1', 'rowBarButton2', 'rowBarButton3']
     elements = []

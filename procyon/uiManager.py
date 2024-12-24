@@ -155,22 +155,32 @@ class UIManager:
             elements = menu.elements 
             startY = position[1]
             startX = position[0]
+
+            yskew = 0
+
             for id, key in enumerate(elements.keys()):
                 element = elements[key]
 
                 augments = element.color
                 selected = panelSelected & (id == menu.selectedIndex)
 
-                y = startY + id
+                y = startY + id + yskew
                 if y > startY + panel.getSize()[1]-1:
                     break
                 elementStr = element.getStr(selected) 
+                xSkew = 0
                 for x in range(min(element.getWidth(), len(elementStr))):
                     if x > panel.getSize()[0]-1:
                         break
                     char = elementStr[x]
+                    if char == '\n':
+                        yskew += 1
+                        y += 1
+                        xSkew = -(x+1)
+                        if y > startY + panel.getSize()[1]-1:
+                            break
                     try:
-                        self.stdscr.addstr(y+1, x+startX, char, augments)
+                        self.stdscr.addstr(y+1, x+startX + xSkew, char, augments)
                     except:
                         continue
 
