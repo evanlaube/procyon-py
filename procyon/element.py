@@ -47,7 +47,7 @@ class Element:
     def sanitizeStr(self, elementStr : str):
         """ Converts a display string into a printable version, for example,
         converts tabs into four spaces """
-        elementStr.replace('\t', '    ')
+        elementStr = elementStr.replace('\t', '    ')
         return elementStr
 
 
