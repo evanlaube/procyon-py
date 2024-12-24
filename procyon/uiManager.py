@@ -24,6 +24,9 @@ class UIManager:
         # Make root panel fill window
         self._rootPanel._setActualSize(self.cols, self.rows)
 
+        # Create a dictionary to store menus
+        self._menus = {}
+
         curses.curs_set(0)
         curses.noecho()
 
@@ -459,3 +462,13 @@ class UIManager:
         """
         return self._rootPanel.splitVertical()
 
+    def addMenu(self, menu : Menu):
+        """ Add a menu to the manager's dictionary of menus"""
+        self._menus[menu.name] = menu
+
+    def getMenuByName(self, name : str):
+        """ Get a menu from the dict of menus with given name """
+        if name not in self._menus.keys():
+            raise Exception(f"Menu with name, {name}, does not exist in manager")
+        
+        return self._menus[name]

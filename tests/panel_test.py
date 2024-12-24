@@ -18,6 +18,7 @@ def main(stdscr: curses.window):
         button = Button(buttonLabel, buttonFunction)
         button.setLabelToResult = True
         mainMenu.addElement(str(i), button)
+    manager.addMenu(mainMenu)
 
     topLeftMenu = Menu('tl')
     topLeftMenu.setDesiredSize(30, 8)
@@ -27,6 +28,7 @@ def main(stdscr: curses.window):
         button.setLabelToResult = True
         topLeftMenu.addElement(str(i), button)
     topLeftMenu.elements['1'].setMaxWidth(10)
+    manager.addMenu(topLeftMenu)
     
     topRightMenu = Menu('tr')
     topRightMenu.setDesiredSize(30, 8)
@@ -35,15 +37,16 @@ def main(stdscr: curses.window):
         button = Button(buttonLabel, buttonFunction)
         button.setLabelToResult = True
         topRightMenu.addElement(str(i), button)
+    manager.addMenu(topRightMenu)
 
     top, bottom = manager.splitHorizontal()
     top.setSize(-1, 8)
     topLeft, topRight = top.splitVertical()
 
 
-    bottom.loadMenu(mainMenu)
-    topLeft.loadMenu(topLeftMenu)
-    topRight.loadMenu(topRightMenu)
+    bottom.loadMenu(manager.getMenuByName('main'))
+    topLeft.loadMenu(manager.getMenuByName('tl'))
+    topRight.loadMenu(manager.getMenuByName('tr'))
 
     manager.run()
 
