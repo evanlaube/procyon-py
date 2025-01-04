@@ -19,6 +19,8 @@ class Menu:
         self.name = name
         self.elements = {} 
         self.selectedIndex = 0
+        self.scrollPadding = 2
+        self._scrollPosition = 0
         self.hasSelectable = False
 
         self._desiredWidth : int = -1 
@@ -66,6 +68,9 @@ class Menu:
         if self.selectedIndex >= len(self.elements)-1:
             return
         self.selectedIndex += 1
+        if self.selectedIndex > self._actualHeight + self._scrollPosition - 1 - self.scrollPadding:
+            if self._scrollPosition < len(self.elements) - self._actualHeight:
+                self._scrollPosition += 1
         while self.elements[list(self.elements)[self.selectedIndex]].selectable == False:
             self.increaseSelectedIndex()
             if(self.selectedIndex >= len(self.elements)-1):
@@ -77,6 +82,9 @@ class Menu:
         if self.selectedIndex <= 0:
             return
         self.selectedIndex -= 1
+        if self.selectedIndex < self._scrollPosition + self.scrollPadding:
+            if self._scrollPosition > 0:
+                self._scrollPosition -= 1
         while self.elements[list(self.elements)[self.selectedIndex]].selectable == False:
             self.decreaseSelectedIndex()
             if(self.selectedIndex <= 0):
@@ -129,5 +137,9 @@ class Menu:
             elif element.getMaxWidth() < self._actualWidth:
                 element._setWidth(element.getMaxWidth())
 
-
-        
+    def getScrollPosition(self):
+        """
+        :returns: Current vertical scroll position in menu
+        :rtype: int
+        """
+        return self._scrollPosition

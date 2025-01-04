@@ -152,17 +152,18 @@ class UIManager:
             panelSelected = panel == self._selectedPanel 
 
             # Display Menu
-            elements = menu.elements 
+            scrollPos = menu.getScrollPosition()
+            elements = menu.elements
             startY = position[1]
             startX = position[0]
 
             yskew = 0
 
-            for id, key in enumerate(elements.keys()):
+            for id, key in enumerate(list(elements.keys())[scrollPos::]):
                 element = elements[key]
 
                 augments = element.color
-                selected = panelSelected & (id == menu.selectedIndex)
+                selected = panelSelected & (id == (menu.selectedIndex-scrollPos))
 
                 y = startY + id + yskew
                 if y > startY + panel.getSize()[1]-1:
