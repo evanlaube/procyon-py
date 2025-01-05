@@ -51,7 +51,7 @@ class Element:
         return elementStr
 
 
-    def getStr(self, selected : bool = False):
+    def getStr(self, selected : bool = False) -> str:
         """Get the display string of the element
         :return: The text to display the element as
         :rtype: str
@@ -85,5 +85,9 @@ class Element:
             raise ValueError("Max width must be set to either negative one or a positive integer")
         
         self._maxWidth = width
+
+    def getHeight(self):
+        """ Returns the height of the element in lines """
+        return self.getStr().count('\n') + 1
 
 

@@ -67,10 +67,14 @@ class Menu:
         """Increase the selected index of the menu, skipping unselectable elements"""
         if self.selectedIndex >= len(self.elements)-1:
             return
+        
+        lastElementKey = list(self.elements.keys())[self.selectedIndex]
+        lastElementHeight = self.elements[lastElementKey].getHeight()
+
         self.selectedIndex += 1
         if self.selectedIndex > self._actualHeight + self._scrollPosition - 1 - self.scrollPadding:
             if self._scrollPosition < len(self.elements) - self._actualHeight:
-                self._scrollPosition += 1
+                self._scrollPosition += lastElementHeight
         while self.elements[list(self.elements)[self.selectedIndex]].selectable == False:
             self.increaseSelectedIndex()
             if(self.selectedIndex >= len(self.elements)-1):
@@ -81,10 +85,14 @@ class Menu:
         """Decrease the selected index of the menu, skipping unselectable elements"""
         if self.selectedIndex <= 0:
             return
+
+        lastElementKey = list(self.elements.keys())[self.selectedIndex]
+        lastElementHeight = self.elements[lastElementKey].getHeight()
+
         self.selectedIndex -= 1
         if self.selectedIndex < self._scrollPosition + self.scrollPadding:
             if self._scrollPosition > 0:
-                self._scrollPosition -= 1
+                self._scrollPosition -= lastElementHeight
         while self.elements[list(self.elements)[self.selectedIndex]].selectable == False:
             self.decreaseSelectedIndex()
             if(self.selectedIndex <= 0):
