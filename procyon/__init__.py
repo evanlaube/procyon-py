@@ -1,3 +1,5 @@
+from .__version__ import __version__
+
 from .uiManager import UIManager
 from .element import Element
 from .container import Container
