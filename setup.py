@@ -1,9 +1,15 @@
 from setuptools import setup, find_packages
-from procyon import __version__
+
+def getVersion():
+    version_file = 'procyon/__version__.py'
+    with open(version_file) as f:
+        globals_dict = {}
+        exec(f.read(), globals_dict)
+        return globals_dict['__version__']
 
 setup(
     name='procyon-py',
-    version=__version__,
+    version=getVersion(),
     description='A terminal based UI library for Python',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
