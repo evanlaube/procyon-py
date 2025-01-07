@@ -53,7 +53,7 @@ class Container(Element):
         self.selectedIndex += 1
         while self.elements[self.selectedIndex].selectable == False:
             self.increaseSelectedIndex()
-            if(self.selectedIndex >= len(self.elements)-1):
+            if(self.selectedIndex > len(self.elements)-1):
                 self.decreaseSelectedIndex()
                 break
 
@@ -64,7 +64,7 @@ class Container(Element):
         self.selectedIndex -= 1
         while self.elements[self.selectedIndex].selectable == False:
             self.decreaseSelectedIndex()
-            if(self.selectedIndex <= 0):
+            if(self.selectedIndex < 0):
                 self.increaseSelectedIndex()
                 break
 
