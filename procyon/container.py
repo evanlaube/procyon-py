@@ -20,20 +20,15 @@ class Container(Element):
 
         # Make sure that at least one element in bar is selectable
         allNotSelectable = True
-        for element in self.elements:
+        for id, element in enumerate(self.elements):
             if element.selectable:
+                self.selectedIndex = id
                 allNotSelectable = False
                 break
 
         # If none are selectable, container is not either
         if allNotSelectable:
             self.selectable = False
-
-        # Shortcut to ensure that an element is selected by default to prevent selecting
-        # unselectable elements
-        if self.selectable:
-            self.increaseSelectedIndex()
-            self.decreaseSelectedIndex()
 
     def handleInput(self, key : int):
         """Pass input keys from the menu to the selected element
