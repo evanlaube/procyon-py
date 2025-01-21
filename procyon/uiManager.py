@@ -73,16 +73,45 @@ class UIManager:
         right = panel.getRight()
         top = panel.getTop()
         bottom = panel.getBottom()
-
+        
         if left is not None and right is not None:
             leftCols = cols // 2 
-            rightCols = cols = leftCols
+            rightCols = cols - leftCols
+
+            leftMenu = left.getMenu()
+            if leftMenu is not None:
+                leftWidth = leftMenu.getDesiredSize()[0]
+                if leftWidth > 5:
+                    leftCols = min(leftCols, leftWidth)
+                leftMenu.setActualSize(rows, leftCols)
+
+            rightMenu = right.getMenu()
+            if rightMenu is not None:
+                rightWidth = rightMenu.getDesiredSize()[0]
+                if rightWidth > 5:
+                    rightCols = min(rightCols, rightWidth) 
+                rightMenu.setActualSize(rows, rightCols)
 
             self._updatePanelSize(left, rows, leftCols)
             self._updatePanelSize(right, rows, rightCols)
         elif top is not None and bottom is not None:
             topRows = rows // 2
             bottomRows = rows - topRows
+
+            topMenu = top.getMenu()
+            if topMenu is not None:
+                topHeight = topMenu.getDesiredSize()[1]
+                if topHeight > 5:
+                    topRows = min(topRows, topHeight)
+                topMenu.setActualSize(topRows, cols)
+
+            bottomMenu = bottom.getMenu()
+            if bottomMenu is not None:
+                bottomHeight = bottomMenu.getDesiredSize()[1]
+                if bottomHeight > 5:
+                    bottomRows = min(bottomRows, bottomHeight)
+                bottomMenu.setActualSize(bottomRows, cols)
+
             self._updatePanelSize(top, topRows, cols)
             self._updatePanelSize(bottom, bottomRows, cols)
 
