@@ -44,13 +44,14 @@ class Element:
             return
         self.action()
 
-    def sanitizeStr(self, elementStr : str, trim : bool = False):
+    def sanitizeStr(self, elementStr : str, trim : bool = True):
         """ Converts a display string into a printable version, for example,
         converts tabs into four spaces. Additionally, trim string to width of element"""
         elementStr = elementStr.replace('\t', '    ')
 
-        if trim:
+        if trim and self._width != 0:
             elementStr = (elementStr[:self._width]) if len(elementStr) > self._width else elementStr
+
         
         return elementStr
 

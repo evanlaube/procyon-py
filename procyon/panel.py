@@ -81,6 +81,9 @@ class Panel:
         if self._desiredHeight < self._actualHeight and self._desiredHeight != -1:
             self._actualHeight = self._desiredHeight
 
+        if self._menu is not None:
+            self.updateMenuSize()
+
     def _setActualSize(self, width: int, height: int):
         """ Sets the actual size of the panel. This method is only intended to
         be called by the UIManager class """
@@ -120,7 +123,6 @@ class Panel:
 
         if self._actualWidth-1 > actWidth:
             if desWidth == -1:
-                menu.setActualSize(1000, 1000)
                 actWidth = self._actualWidth-1
                 menu.setActualSize(actWidth, actHeight) 
             else:

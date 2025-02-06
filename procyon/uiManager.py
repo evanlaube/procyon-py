@@ -83,6 +83,7 @@ class UIManager:
                 leftWidth = leftMenu.getDesiredSize()[0]
                 if leftWidth > 5:
                     leftCols = min(leftCols, leftWidth)
+                    rightCols = cols-leftCols
                 leftMenu.setActualSize(rows, leftCols)
 
             rightMenu = right.getMenu()
@@ -90,10 +91,11 @@ class UIManager:
                 rightWidth = rightMenu.getDesiredSize()[0]
                 if rightWidth > 5:
                     rightCols = min(rightCols, rightWidth) 
+                    leftCols = cols-rightCols
                 rightMenu.setActualSize(rows, rightCols)
 
-            self._updatePanelSize(left, rows, leftCols)
             self._updatePanelSize(right, rows, rightCols)
+            self._updatePanelSize(left, rows, leftCols)
         elif top is not None and bottom is not None:
             topRows = rows // 2
             bottomRows = rows - topRows
@@ -103,6 +105,7 @@ class UIManager:
                 topHeight = topMenu.getDesiredSize()[1]
                 if topHeight > 5:
                     topRows = min(topRows, topHeight)
+                    bottomRows = rows - topRows
                 topMenu.setActualSize(topRows, cols)
 
             bottomMenu = bottom.getMenu()
@@ -110,6 +113,7 @@ class UIManager:
                 bottomHeight = bottomMenu.getDesiredSize()[1]
                 if bottomHeight > 5:
                     bottomRows = min(bottomRows, bottomHeight)
+                    topRows = rows - bottomRows
                 bottomMenu.setActualSize(bottomRows, cols)
 
             self._updatePanelSize(top, topRows, cols)
@@ -233,7 +237,6 @@ class UIManager:
         """ Recursive call for update method """
         if panel is None:
             return
-
 
         # Update panel menus
         menu = panel.getMenu()
