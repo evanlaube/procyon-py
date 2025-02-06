@@ -186,33 +186,43 @@ class UIManager:
             startY = position[1]
             startX = position[0]
 
-            yskew = 0
+            y = startY
 
+            # Draw each element in the menu
             for id, key in enumerate(list(elements.keys())[scrollPos::]):
                 element = elements[key]
-
-                augments = element.color
+                # Take details from element
                 selected = panelSelected & (id == (menu.selectedIndex-scrollPos))
+                augments = element.color
 
-                y = startY + id + yskew
-                if y > startY + panel.getSize()[1]-1:
-                    break
-                elementStr = element.getStr(selected) 
-                xSkew = 0
-                for x in range(min(element.getWidth(), len(elementStr))):
-                    if x > panel.getSize()[0]-1:
-                        break
-                    char = elementStr[x]
-                    if char == '\n':
-                        yskew += 1
-                        y += 1
-                        xSkew = -(x+1)
-                        if y > startY + panel.getSize()[1]-1:
+                elementStr = element.getStr(selected)
+                # Split element string into array of lines
+                lines = elementStr.split('\n')
+
+                # For each line (Usually just one line)
+                for line in lines:
+                    if y > panel.getSize()[1]-1:
+                        # Return from draw function when y cursor goes past panel height
+                        return
+                    
+                    # For n character index in the line
+                    for n in range(len(line)):
+                        x = startX + n
+
+                        # Break if character index goes past width of panel
+                        if n > panel.getSize()[0]-1:
                             break
-                    try:
-                        self.stdscr.addstr(y+1, x+startX + xSkew, char, augments)
-                    except:
-                        continue
+
+                        char = line[n]
+
+                        try:
+                            self.stdscr.addstr(y, x, char, augments)
+                        except:
+                            # If unable to print, simply skip that character
+                            continue
+
+                    # Increment y positon, as line has been completely drawn
+                    y += 1
 
     def update(self):
         """ Updates each individual panel """

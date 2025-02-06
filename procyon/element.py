@@ -44,10 +44,14 @@ class Element:
             return
         self.action()
 
-    def sanitizeStr(self, elementStr : str):
+    def sanitizeStr(self, elementStr : str, trim : bool = False):
         """ Converts a display string into a printable version, for example,
-        converts tabs into four spaces """
+        converts tabs into four spaces. Additionally, trim string to width of element"""
         elementStr = elementStr.replace('\t', '    ')
+
+        if trim:
+            elementStr = (elementStr[:self._width]) if len(elementStr) > self._width else elementStr
+        
         return elementStr
 
 
@@ -56,7 +60,7 @@ class Element:
         :return: The text to display the element as
         :rtype: str
         """
-        return self.sanitizeStr(self.label)
+        return self.sanitizeStr(self.label) 
     
     def handleInput(self, key : int):
         """ Do nothing for now as no input should be passed into a simple element """
