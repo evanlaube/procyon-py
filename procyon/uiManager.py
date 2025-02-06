@@ -18,7 +18,7 @@ class UIManager:
 
         self._rootPanel : Panel = Panel()
         self._selectedPanel : Panel = self._rootPanel
-        self.updateWindowSize()
+        self.rows, self.cols = self.stdscr.getmaxyx()
 
         # Create a root panel to contain all other panels
         # Make root panel fill window
@@ -75,46 +75,72 @@ class UIManager:
         bottom = panel.getBottom()
         
         if left is not None and right is not None:
-            leftCols = cols // 2 
-            rightCols = cols - leftCols
-
             leftMenu = left.getMenu()
-            if leftMenu is not None:
-                leftWidth = leftMenu.getDesiredSize()[0]
-                if leftWidth > 5:
-                    leftCols = min(leftCols, leftWidth)
-                    rightCols = cols-leftCols
-                leftMenu.setActualSize(rows, leftCols)
-
             rightMenu = right.getMenu()
+
+            leftDesiredWidth = rightDesiredWidth = -1
+
+            if leftMenu is not None:
+                leftDesiredWidth = leftMenu.getDesiredSize()[0]
+
             if rightMenu is not None:
-                rightWidth = rightMenu.getDesiredSize()[0]
-                if rightWidth > 5:
-                    rightCols = min(rightCols, rightWidth) 
-                    leftCols = cols-rightCols
-                rightMenu.setActualSize(rows, rightCols)
+                rightDesiredWidth = rightMenu.getDesiredSize()[0]
+
+            if leftDesiredWidth == -1 and rightDesiredWidth == -1:
+                leftCols = cols // 2 
+                rightCols = cols - leftCols
+            elif leftDesiredWidth == -1:
+                rightCols = min(rightDesiredWidth, cols-5)
+                leftCols = cols - rightCols
+            elif rightDesiredWidth == -1:
+                leftCols = min(leftDesiredWidth, cols-5)
+                rightCols = cols - leftCols
+            else:
+                # Split 50/50 for now
+                # TODO: Implement logic here
+                leftCols = cols // 2 
+                rightCols = cols - leftCols
+
+            if leftMenu is not None:
+                leftMenu.setActualSize(leftCols, rows)
+
+            if rightMenu is not None:
+                rightMenu.setActualSize(rightCols, rows)
 
             self._updatePanelSize(right, rows, rightCols)
             self._updatePanelSize(left, rows, leftCols)
         elif top is not None and bottom is not None:
-            topRows = rows // 2
-            bottomRows = rows - topRows
-
             topMenu = top.getMenu()
-            if topMenu is not None:
-                topHeight = topMenu.getDesiredSize()[1]
-                if topHeight > 5:
-                    topRows = min(topRows, topHeight)
-                    bottomRows = rows - topRows
-                topMenu.setActualSize(topRows, cols)
-
             bottomMenu = bottom.getMenu()
+
+            topDesiredHeight = bottomDesiredHeight = -1
+
+            if topMenu is not None:
+                topDesiredHeight = topMenu.getDesiredSize()[1]
+
             if bottomMenu is not None:
-                bottomHeight = bottomMenu.getDesiredSize()[1]
-                if bottomHeight > 5:
-                    bottomRows = min(bottomRows, bottomHeight)
-                    topRows = rows - bottomRows
-                bottomMenu.setActualSize(bottomRows, cols)
+                bottomDesiredHeight = bottomMenu.getDesiredSize()[1]
+
+            if topDesiredHeight == -1 and bottomDesiredHeight == -1:
+                topRows = rows // 2 
+                bottomRows = rows - topRows 
+            elif bottomDesiredHeight == -1:
+                topRows = min(topDesiredHeight, rows-5)
+                bottomRows = rows - topRows
+            elif topDesiredHeight == -1:
+                bottomRows = min(bottomDesiredHeight, rows-5)
+                topRows = rows - bottomRows
+            else:
+                # Split 50/50 for now
+                # TODO: Implement logic here
+                topRows = rows // 2 
+                bottomRows = rows - topRows 
+
+            if topMenu is not None:
+                topMenu.setActualSize(cols, topRows)
+
+            if bottomMenu is not None:
+                bottomMenu.setActualSize(cols, bottomRows)
 
             self._updatePanelSize(top, topRows, cols)
             self._updatePanelSize(bottom, bottomRows, cols)
@@ -205,7 +231,7 @@ class UIManager:
 
                 # For each line (Usually just one line)
                 for line in lines:
-                    if y > panel.getSize()[1]-1:
+                    if y > startY + panel.getSize()[1]-1:
                         # Return from draw function when y cursor goes past panel height
                         return
                     
@@ -297,9 +323,6 @@ class UIManager:
             if bottomWidth == -1:
                 bottomWidth = width 
 
-            top.setSize(topWidth, topHeight)
-            bottom.setSize(bottomWidth, bottomHeight)
-
         if panel.getLeft() and panel.getRight():
             # If panel split horizontally
             left = panel.getLeft()
@@ -354,9 +377,6 @@ class UIManager:
 
             if leftWidth == 0:
                 raise Exception(f"LeftWidth is zero! leftSize:{left.getSize()} leftDesiredSize:{left.getDesiredSize()} rightSize:{right.getSize()} rightDesiredSize:{right.getDesiredSize()}")
-
-            left.setSize(leftWidth, leftHeight)
-            right.setSize(rightWidth, rightHeight)
 
         self._recUpdatePanel(panel.getLeft())
         self._recUpdatePanel(panel.getRight())

@@ -31,19 +31,7 @@ class Panel:
         self._actualWidth = -1 
         self._actualHeight = -1 
 
-    def getSize(self) -> tuple[int, int]:
-        """
-        :returns: The actual size of the panel
-        :rtype: tuple[int, int]
-        """
-        return (self._actualWidth, self._actualHeight)
 
-    def getDesiredSize(self) -> tuple[int, int]:
-        """
-        :returns: The desired size of the panel
-        :rtype: tuple[int, int]
-        """
-        return (self._desiredWidth, self._desiredHeight)
 
     def getLeft(self):
         return self._left
@@ -84,6 +72,13 @@ class Panel:
         if self._menu is not None:
             self.updateMenuSize()
 
+    def getDesiredSize(self) -> tuple[int, int]:
+        """
+        :returns: The desired size of the panel
+        :rtype: tuple[int, int]
+        """
+        return (self._desiredWidth, self._desiredHeight)
+
     def _setActualSize(self, width: int, height: int):
         """ Sets the actual size of the panel. This method is only intended to
         be called by the UIManager class """
@@ -94,6 +89,13 @@ class Panel:
 
         self._actualWidth = width
         self._actualHeight = height
+
+    def getSize(self) -> tuple[int, int]:
+        """
+        :returns: The actual size of the panel
+        :rtype: tuple[int, int]
+        """
+        return (self._actualWidth, self._actualHeight)
 
     def loadMenu(self, menu : Menu):
         """ Loads a menu into the panel and updates menu's size
