@@ -408,78 +408,149 @@ class UIManager:
         if top is not None:
             self.selectPanel(top)
 
-    def traversePanelUp(self):
-        """ Traverses the current selected panel to the panel diretly on top 
-        of the current selected panel, if one exsts """
-        parent = self._selectedPanel.getParent()
-        self._recTraversePanelUp(parent)
+    def _findLeftmostPanel(self, candidate : Panel, fromPanel : Panel):
+        if candidate.hasMenu():
+            return candidate
+
+        left, right = candidate.getLeft(), candidate.getRight()
+
+        if left is not None and right is not None:
+            return self._findLeftmostPanel(left, fromPanel)
+
+        top, bottom = candidate.getTop(), candidate.getBottom()
+        if top is not None and bottom is not None:
+            parent = fromPanel.getParent()
+
+            if parent is not None and parent.getTop() == fromPanel:
+                return self._findLeftmostPanel(top, fromPanel)
+            else:
+                return self._findLeftmostPanel(bottom, fromPanel)
+
+        return candidate
     
-    def _recTraversePanelUp(self, panel : Panel | None):
-        """ Recursive call for traversePanelUp method """
-        if panel is None:
-            # Then there is no panel on top of current selected
-            return
+    def _findRightmostPanel(self, candidate : Panel, fromPanel : Panel):
+        if candidate.hasMenu():
+            return candidate
+        
+        left, right = candidate.getLeft(), candidate.getRight()
+        if left is not None and right is not None:
+            return self._findRightmostPanel(right, fromPanel)
 
-        top = panel.getTop()
-        if top is not None:
-            self.selectPanel(top)
-            return
+        top, bottom = candidate.getTop(), candidate.getBottom()
+        if top is not None and bottom is not None:
+            parent = fromPanel.getParent()
+            if parent is not None and parent.getBottom() == fromPanel:
+                return self._findRightmostPanel(bottom, fromPanel)
+            else:
+                return self._findRightmostPanel(top, fromPanel)
 
-        self._recTraversePanelUp(panel.getParent())
+        return candidate
+
+    def _findTopmostPanel(self, candidate : Panel, fromPanel : Panel):
+        if candidate.hasMenu():
+            return candidate
+
+        top, bottom = candidate.getTop(), candidate.getBottom()
+        if top is not None and bottom is not None:
+            return self._findTopmostPanel(top, fromPanel)
+        
+        left, right = candidate.getLeft(), candidate.getRight()
+        if left is not None and right is not None:
+            parent = fromPanel.getParent()
+            if parent is not None and parent.getRight() == fromPanel:
+                return self._findTopmostPanel(right, fromPanel)
+            else:
+                return self._findTopmostPanel(left, fromPanel)
+
+        return candidate
+
+    def _findBottommostPanel(self, candidate : Panel, fromPanel : Panel):
+        if candidate.hasMenu():
+            return candidate
+
+        top, bottom = candidate.getTop(), candidate.getBottom()
+        if top is not None and bottom is not None:
+            return self._findBottommostPanel(bottom, fromPanel)
+
+        left, right = candidate.getLeft(), candidate.getRight()
+        if left is not None and right is not None:
+            parent = fromPanel.getParent()
+            if parent is not None and parent.getLeft() == fromPanel:
+                return self._findBottommostPanel(left, fromPanel)
+            else:
+                return self._findBottommostPanel(right, fromPanel)
+
+        return candidate
+
+    def _findLeftNeighbor(self, panel : Panel):
+        parent =  panel.getParent()
+        if parent is None:
+            # Root panel has no neighbors
+            return None
+
+        leftCandidate = parent.getLeft()
+        if parent.getRight() == panel and leftCandidate is not None:
+            return self._findRightmostPanel(leftCandidate, panel)
+        else:
+            return self._findLeftNeighbor(parent)
+
+    def _findRightNeighbor(self, panel : Panel):
+        """ Walks upward until it finds a parent in which this panel is on the
+        left of a vertical split. """
+        parent = panel.getParent()
+        if parent is None:
+            # Root panel has no neighbors
+            return None
+
+        rightCandidate = parent.getRight()
+        if parent.getLeft() == panel and rightCandidate is not None:
+            return self._findLeftmostPanel(rightCandidate, panel)
+        else:
+            return self._findRightNeighbor(parent)
+
+    def _findTopNeighbor(self, panel : Panel):
+        parent = panel.getParent()
+        if parent is None:
+            return None
+
+        topCandidate = parent.getTop()
+        if parent.getBottom() == panel and topCandidate is not None:
+            return self._findTopmostPanel(topCandidate, panel)
+        else:
+            return self._findBottomNeighbor(parent)
+
+    def _findBottomNeighbor(self, panel : Panel):
+        parent = panel.getParent()
+        if parent is None:
+            return None
+
+        bottomCandidate = parent.getBottom()
+        if parent.getTop() == panel and bottomCandidate is not None:
+            return self._findBottommostPanel(bottomCandidate, panel)
+        else:
+            return self._findTopNeighbor(parent)
+
+    def traversePanelLeft(self):
+        neighbor = self._findLeftNeighbor(self._selectedPanel)
+        if neighbor is not None:
+            self.selectPanel(neighbor)
 
     def traversePanelRight(self):
         """ Traverses the current selected panel to the panel diretly right 
         of the current selected panel, if one exsts """
-        parent = self._selectedPanel.getParent()
-        self._recTraversePanelRight(parent)
+        neighbor = self._findRightNeighbor(self._selectedPanel)
+        if neighbor is not None:
+            self.selectPanel(neighbor)
 
-    def _recTraversePanelRight(self, panel : Panel | None):
-        """ Recursive call for traversePanelRight method """
-        if panel is None:
-            # Then there is no panel right of current selected
-            return
-
-        right = panel.getRight()
-        if right is not None:
-            self.selectPanel(right)
-            return
-        self._recTraversePanelRight(panel.getParent())
-
+    def traversePanelUp(self):
+        neighbor = self._findTopNeighbor(self._selectedPanel)
+        if neighbor is not None:
+            self.selectPanel(neighbor)
+    
     def traversePanelDown(self):
-        """ Traverses the current selected panel to the panel diretly below 
-        of the current selected panel, if one exsts """
-        parent = self._selectedPanel.getParent()
-        self._recTraversePanelDown(parent)
-
-    def _recTraversePanelDown(self, panel : Panel | None):
-        """ Recursive call for traversePanelDown method """
-        if panel is None:
-            # Then there is no panel below current selected
-            return
-        
-        bottom = panel.getBottom()
-        if bottom is not None:
-            self.selectPanel(bottom)
-            return
-        self._recTraversePanelDown(panel.getParent())
-
-    def traversePanelLeft(self):
-        """ Traverses the current selected panel to the panel diretly left 
-        of the current selected panel, if one exsts """
-        parent = self._selectedPanel.getParent()
-        self._recTraversePanelLeft(parent)
-
-    def _recTraversePanelLeft(self, panel : Panel | None):
-        """ Recursive call for traversePanelLeft method """
-        if panel is None:
-            # Then there is no panel left of current selected
-            return
-        
-        left = panel.getLeft()
-        if left is not None:
-            self.selectPanel(left)
-            return
-        self._recTraversePanelLeft(panel.getParent())
+        neighbor = self._findBottomNeighbor(self._selectedPanel)
+        if neighbor is not None:
+            self.selectPanel(neighbor)
 
     def mainLoop(self):
         """Continually update menus and elements until the program exits"""

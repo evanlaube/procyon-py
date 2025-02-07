@@ -42,10 +42,12 @@ def main(stdscr: curses.window):
     top, bottom = manager.splitHorizontal()
     top.setSize(-1, 8)
     topLeft, topRight = top.splitVertical()
+    tll, tlr = topLeft.splitVertical()
 
 
     bottom.loadMenu(manager.getMenuByName('main'))
-    topLeft.loadMenu(manager.getMenuByName('tl'))
+    tll.loadMenu(manager.getMenuByName('tl'))
+    tlr.loadMenu(manager.getMenuByName('main'))
     topRight.loadMenu(manager.getMenuByName('tr'))
 
     manager.run()
