@@ -72,7 +72,7 @@ class Menu:
         lastElementHeight = self.elements[lastElementKey].getHeight()
 
         self.selectedIndex += 1
-        if self.selectedIndex > self._actualHeight + self._scrollPosition - 1 - self.scrollPadding:
+        if self.selectedIndex > self._actualHeight + self._scrollPosition - self.scrollPadding:
             if self._scrollPosition < len(self.elements) - self._actualHeight:
                 self._scrollPosition += lastElementHeight
         while self.elements[list(self.elements)[self.selectedIndex]].selectable == False:

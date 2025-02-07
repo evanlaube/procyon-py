@@ -102,10 +102,10 @@ class UIManager:
                 rightCols = cols - leftCols
 
             if leftMenu is not None:
-                leftMenu.setActualSize(leftCols, rows)
+                leftMenu.setActualSize(leftCols-1, rows-1)
 
             if rightMenu is not None:
-                rightMenu.setActualSize(rightCols, rows)
+                rightMenu.setActualSize(rightCols-1, rows-1)
 
             self._updatePanelSize(right, rows, rightCols)
             self._updatePanelSize(left, rows, leftCols)
@@ -207,52 +207,47 @@ class UIManager:
                 except:
                     return
         else:
-            # TODO: Figure out how to determine if panel is selceted
-            panelSelected = panel == self._selectedPanel 
+            self._displayLeafPanel(panel, position)
 
-            # Display Menu
-            scrollPos = menu.getScrollPosition()
-            elements = menu.elements
-            startY = position[1]
-            startX = position[0]
+    def _displayLeafPanel(self, panel : Panel, position : tuple[int, int]):
+        """ Displays a panel that contains a menu """
+        menu = panel.getMenu()
+        if menu is None:
+            return
+ 
+        # TODO: Figure out how to determine if panel is selceted
+        panelSelected = panel == self._selectedPanel 
+ 
+        # Display Menu
+        scrollPos = menu.getScrollPosition()
+        elements = menu.elements
+        startY = position[1]
+        startX = position[0]
 
-            y = startY
+        # Hacky fix, but for now this works to prevent drawing first line of bottom
+        # panel on border
+        parent = panel.getParent()
+        if parent is not None:
+            if panel is parent.getBottom():
+                startY += 1
+        
+        elementList = list(elements.values())
+        lines = []
+        for id in range(scrollPos, len(elementList)):
+            selected = panelSelected & (id == (menu.selectedIndex))
+            lines += elementList[id].getStr(selected).split('\n')
 
-            # Draw each element in the menu
-            for id, key in enumerate(list(elements.keys())[scrollPos::]):
-                element = elements[key]
-                # Take details from element
-                selected = panelSelected & (id == (menu.selectedIndex-scrollPos))
-                augments = element.color
+        for y in range(len(lines)):
+            if y >= panel.getSize()[1]:
+                return
 
-                elementStr = element.getStr(selected)
-                # Split element string into array of lines
-                lines = elementStr.split('\n')
-
-                # For each line (Usually just one line)
-                for line in lines:
-                    if y > startY + panel.getSize()[1]-1:
-                        # Return from draw function when y cursor goes past panel height
-                        return
-                    
-                    # For n character index in the line
-                    for n in range(len(line)):
-                        x = startX + n
-
-                        # Break if character index goes past width of panel
-                        if n > panel.getSize()[0]-1:
-                            break
-
-                        char = line[n]
-
-                        try:
-                            self.stdscr.addstr(y, x, char, augments)
-                        except:
-                            # If unable to print, simply skip that character
-                            continue
-
-                    # Increment y positon, as line has been completely drawn
-                    y += 1
+            line = lines[y]
+            if len(line) > panel.getSize()[0]:
+                line = line[0:panel.getSize()[0]]
+            try:
+                self.stdscr.addstr(y + startY, startX, line)
+            except:
+                pass
 
     def update(self):
         """ Updates each individual panel """
